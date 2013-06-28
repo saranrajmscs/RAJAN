@@ -1,3 +1,4 @@
 eclipse.preferences.version=1
+jarsExcludedFromWebInfLib=C\:/Android/JSON-java-master/JSON.jar
 warSrcDir=war
 warSrcDirIsOutput=true

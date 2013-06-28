@@ -6,5 +6,6 @@
 	<classpathentry exported="true" kind="con" path="com.google.gdt.eclipse.managedapis.MANAGED_API_CONTAINER/plus-v1r75lv1.14.2-beta"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry exported="true" kind="lib" path="C:/Android/JSON-java-master/JSON.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

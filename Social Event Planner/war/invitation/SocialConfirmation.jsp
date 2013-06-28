@@ -121,74 +121,16 @@
 	
 		
 <form class="form-horizontal" action="/InvitationHandler" method="post">
- <input type="hidden" name="HiddenControl" value="Step1">
+ <input type="hidden" name="HiddenControl" value="Step2">
  <div class="control-group">
   	
     <div class="controls" align=left>
-      Please fill in details to create Event Invitation.
+      Please be advised that you can invite your Facebook friends for your personal Event. Please click the below button to get your Facebook friends. 
     </div>
   </div>
   <div class="control-group">
   	
-    <div class="controls" align=left>
-      <label class="control-label" for="inputEmail" >Event Name:</label>&nbsp;&nbsp;&nbsp;	
-      <input type="text" name="EventName" placeholder="Event Name">
-    </div>
-  </div>   
-  <div class="control-group">
-  	
-    <div class="controls" align=left>
-      <label class="control-label" for="inputEmail" >Event Type:</label>&nbsp;&nbsp;&nbsp;	
-      <select name="EventType">
-      	<Option value="Personal">Personal</Option>
-      	<Option value="Professional">Professional</Option>
-      </select>
-      
-    </div>
-  </div> 
-  <div class="control-group">
-  	
-    <div class="controls" align=left>
-      <label class="control-label" for="inputEmail" >Event Date:</label>&nbsp;&nbsp;&nbsp;	
-      <input type="text" name="EventDate" placeholder="Event Date">
-    </div>
-  </div> 
-  <div class="control-group">
-  	
-    <div class="controls" align=left>
-      <label class="control-label" for="inputEmail" >Event Time:</label>&nbsp;&nbsp;&nbsp;	
-      <input type="text" name="EventTime" placeholder="Event Time">
-    </div>
-  </div> 
-  
-  <div class="control-group">
-  	
-    <div class="controls" align=left>
-      <label class="control-label" for="inputEmail" >Event Location:</label>&nbsp;&nbsp;&nbsp;	
-      <input type="text" name="EventLocation" placeholder="Event Location">
-    </div>
-  </div> 
-  <div class="control-group">
-  	
-    <div class="controls" align=left>
-      <label class="control-label" for="inputEmail" >Event Host:</label>&nbsp;&nbsp;&nbsp;	
-      <input type="text" name="EventHost" placeholder="Event Host">
-    </div>
-  </div> 
-  <div class="control-group">
-  	
-    <div class="controls" align=left>
-      <label class="control-label" for="inputEmail" >Host Contact Details:</label>&nbsp;&nbsp;&nbsp;	
-      <input type="text" name="HostContactDetails" placeholder="Host Contact Details">
-    </div>
-  </div> 
- <div class="control-group">
-  	
-    <div class="controls" align=left>
-      <label class="control-label" for="inputEmail" >Event Description:</label>&nbsp;&nbsp;&nbsp;	
-      <textarea rows="3" placeholder="Event Description" name="EventDesc"></textarea>
-    </div>
-  </div>   
+   
   <div class="control-group">
     <div class="controls" align=center>
       <button type="submit" class="btn btn-primary">Continue >></button>
