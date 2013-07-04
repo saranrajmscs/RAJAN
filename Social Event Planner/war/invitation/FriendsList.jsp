@@ -3,6 +3,7 @@
 <%@ page import="javax.servlet.http.HttpSession" %>    
 <%@ page import="org.json.JSONArray" %>
 <%@ page import="org.json.JSONObject" %>
+<%@ page import="java.util.*" %>
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -115,7 +116,7 @@
                 <li ><a href="../index.html">Home</a></li>
                 <li><a href="#">Sign In</a></li>
                 <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
-                <li><a href="#">Photo Album</a></li>
+                <!--  li><a href="#">Photo Album</a></li-->
                 <li><a href="#">Recommend Gift</a></li>
                 <li><a href="#">Contact</a></li>
               </ul>
@@ -123,7 +124,14 @@
           </div>
         </div><!-- /.navbar -->
       </div>
-		
+		<% Enumeration<String> lst = session.getAttributeNames();
+    		while(lst.hasMoreElements()) {
+    			String str = (String) lst.nextElement();
+   		%>
+    		<!-- %= str %-->
+   		<%
+    		} 
+		%>
 <form class="form-horizontal" action="/InvitationHandler" method="post">
  <input type="hidden" name="HiddenControl" value="FriendSelect">
  <div class="row-fluid">
@@ -146,15 +154,19 @@
 	JSONArray j3 = (JSONArray) j2.get("data");
 	System.out.println("Converted JSON 3 : " + j2.get("data"));
 	System.out.println("Converted JSON 3 : " + j3.length());*/
-	JSONArray j3 = (JSONArray) session.getAttribute("FBFRNDJSON");
+	String jsonStr = (String) session.getAttribute("FBFRNDJSON");
+	JSONArray j3 = new JSONArray(jsonStr);
 	JSONObject jo = null;
 	int j = 0;
 	for(int i = 0; i < j3.length() ; i++ ) {
 		//JSONObject jo = j3.getJSONObject(i);
 		//System.out.println(i + " - ID " + jo.get("id") + " - " + jo.get("name"));
  %>
+ 
+ 
 <div class="row-fluid">
     <div class="span4">
+    	
       <% jo = j3.getJSONObject(i); %>
       <input type="checkbox" value=<%= jo.get("id") %> name=<%= jo.get("id") %>>  <%= jo.get("name") %>
     </div>
@@ -181,8 +193,9 @@
    
   <div class="control-group">
     <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">Continue >></button>
+      <button type="submit" class="btn btn-primary">Continue</button>
     </div>
+  </div>
   </div>
 </form>				
 

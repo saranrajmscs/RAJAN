@@ -58,7 +58,7 @@ public class InvitationHandler extends HttpServlet {
 	protected void processResponse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		PrintWriter    servletOutput = response.getWriter(); 
-		servletOutput.print("<html><body><h1>The Facebook Friends are: </h1><p />");
+		//servletOutput.print("<html><body><h1>The Facebook Friends are: </h1><p />");
 		
 		HttpSession session = request.getSession(true);
 		
@@ -133,13 +133,24 @@ public class InvitationHandler extends HttpServlet {
 			
 					JSONObject j2 = (JSONObject) frnd.get("friends");
 					JSONArray j3 = (JSONArray) j2.get("data");
-					//session.setAttribute("FBFRNDJSON", j3);
-					for(int i = 0; i < j3.length() ; i++ ) {
+								
+					
+					try {
+						session.setAttribute("FBFRNDJSON", j3.toString());
+						//System.out.println("SESSION "+session);
+					}
+					catch(Exception e) {
+						e.printStackTrace(servletOutput);
+					}
+					/*for(int i = 0; i < j3.length() ; i++ ) {
 						JSONObject jo = j3.getJSONObject(i);
 						servletOutput.println("<br/>" + (i+1) + " - FB ID " + jo.get("id") + " - " + jo.get("name"));
-					}
+					}*/
 					buffRdr.close();
+					String redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/FriendsList.jsp" );
+					response.sendRedirect(redirect);
 					//response.sendRedirect("./invitation/FriendsList.jsp");
+					//this.getServletConfig().getServletContext().getRequestDispatcher("./invitation/FriendsList.jsp");
 				}
 				catch(Exception e) {
 					e.printStackTrace();

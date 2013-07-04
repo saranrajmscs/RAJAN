@@ -110,7 +110,7 @@
                 <li ><a href="../index.html">Home</a></li>
                 <li><a href="#">Sign In</a></li>
                 <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
-                <li><a href="#">Photo Album</a></li>
+                <!-- li><a href="#">Photo Album</a></li-->
                 <li><a href="#">Recommend Gift</a></li>
                 <li><a href="#">Contact</a></li>
               </ul>
@@ -191,7 +191,7 @@
   </div>   
   <div class="control-group">
     <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">Continue >></button>
+      <button type="submit" class="btn btn-primary">Continue</button>
     </div>
   </div>
 </form>				

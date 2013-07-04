@@ -26,7 +26,9 @@ public class JSONTest {
 		System.out.println("Converted JSON 2 : " + jobj.names());
 		
 		JSONObject j2 = (JSONObject) jobj.get("friends");
-		JSONArray j3 = (JSONArray) j2.get("data");
+		JSONArray j31 = (JSONArray) j2.get("data");
+		String str1 = j31.toString();
+		JSONArray j3 = new JSONArray(str1);
 		System.out.println("Converted JSON 3 : " + j2.get("data"));
 		System.out.println("Converted JSON 3 : " + j3.length());
 		for(int i = 0; i < j3.length() ; i++ ) {
