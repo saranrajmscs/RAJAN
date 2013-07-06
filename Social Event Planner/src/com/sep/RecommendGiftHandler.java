@@ -31,7 +31,6 @@ public class RecommendGiftHandler extends HttpServlet{
 	
 	protected void processResponse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-
 		
 		
 		 String code = (String) request.getParameter("code");
@@ -82,29 +81,16 @@ public class RecommendGiftHandler extends HttpServlet{
 	        	e.printStackTrace();
 	        }
 
-	        String facebookId;
-	        String firstName;
-	        String middleNames;
-	        String lastName;
-	        String email;
 	        List<Friend> friendList = new ArrayList<Friend>();
 	        List<FriendLike> friendLikes = new ArrayList<FriendLike>();
+	        List<FriendInterest> friendInterestsList = new ArrayList<FriendInterest>();
 	        int friendListize;
 	        Friend friend = null;
 	        FriendLike friendLike = null;
-	       // Gender gender;
-	        String gender;
+	        FriendInterest friendInterest = null;
 	        try {
-	        	String apiKey = "322861041181267";
-	        	String secretKey = "e6fb605e445367d5711b16f8c1c93274";
 	        	JSONObject json = new JSONObject(graphForFriendsList);
 	        	friendListize = json.getJSONArray("data").length();
-	            /*for(int i=0;i<friendListize;i++) {
-	            	friend = new Friend();
-	            	friend.setFriendId(json.getJSONArray("data").getJSONObject(i).getString("id"));
-	            	friend.setFriendName(json.getJSONArray("data").getJSONObject(i).getString("name"));
-	            	friendList.add(friend);
-	            }*/
 	            System.out.println(friendListize);
 	            for(int i=0;i<friendListize;i++) {
 	            	friend = new Friend();
@@ -129,18 +115,36 @@ public class RecommendGiftHandler extends HttpServlet{
 		            	friendLikes.add(friendLike);
 		            	friend.setFriendLikes(friendLikes);
 		            	}
+		            String userInterestsGraph = "https://graph.facebook.com/"+json.getJSONArray("data").getJSONObject(i).getString("id")+"/interests?" + token;
+		            URL userInterestsUrl = new URL(userInterestsGraph);
+		            URLConnection userInterestsConn = userInterestsUrl.openConnection();
+		            BufferedReader userInterestsInput = new BufferedReader(new InputStreamReader(userInterestsConn.getInputStream()));
+		            String userInterestInputLine;
+		            StringBuffer userInterestBuffer = new StringBuffer();
+		            while ((userInterestInputLine = userInterestsInput.readLine()) != null)
+		            	userInterestBuffer.append(userInterestInputLine + "\n");            
+		            userInterestsInput.close();
+		            String userInterestsGraphUse = userInterestBuffer.toString();
+		            JSONObject jsonInterests = new JSONObject(userInterestsGraphUse);
+		            for(int k=0;k<jsonInterests.getJSONArray("data").length();k++) {
+		            	friendInterest = new FriendInterest();
+		            	friendInterest.setInterestCategory(jsonInterests.getJSONArray("data").getJSONObject(k).getString("category"));
+		            	friendInterest.setInterestName(jsonInterests.getJSONArray("data").getJSONObject(k).getString("name"));
+		            	friendInterest.setInterestId(jsonInterests.getJSONArray("data").getJSONObject(k).getString("id"));
+		            	friendInterestsList.add(friendInterest);
+		            	friend.setFriendInterestsList(friendInterestsList);
+		            	System.out.println(jsonLikes.getJSONArray("data").getJSONObject(k).getString("category"));
+		            	}
 		            friendList.add(friend);
-		            //System.out.println("The likes of: "+json.getJSONArray("data").getJSONObject(i).getString("id"));
-		            System.out.println("graph"+graph);
-		            //System.out.println("----------------------------------------------------------------------------------------------------------------------");
+		            //System.out.println(userInterestsGraphUse);
 	            }
 	            
 	        } catch (Exception e) {
-	            // an error occurred, handle this
-	        	e.printStackTrace();
+	            e.printStackTrace();
 	        }
 
-		
+	    
+
 	}
 	
 	

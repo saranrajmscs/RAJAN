@@ -7,6 +7,13 @@ public class Friend {
 private String friendId;
 private String friendName;
 private List<FriendLike> friendLikes;
+private List<FriendInterest> friendInterestsList;
+public List<FriendInterest> getFriendInterestsList() {
+	return friendInterestsList;
+}
+public void setFriendInterestsList(List<FriendInterest> friendInterestsList) {
+	this.friendInterestsList = friendInterestsList;
+}
 public String getFriendId() {
 	return friendId;
 }
