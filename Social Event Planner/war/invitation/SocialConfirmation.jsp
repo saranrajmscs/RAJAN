@@ -134,7 +134,7 @@
    
   <div class="control-group">
     <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">Continue</button>
+      <button type="submit" class="btn btn-primary">FB Friends</button>
     </div>
   </div>
   </div>
@@ -154,7 +154,7 @@
    
   <div class="control-group">
     <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">Continue</button>
+      <button type="submit" class="btn btn-primary">G+ Friends</button>
     </div>
   </div>
   </div>

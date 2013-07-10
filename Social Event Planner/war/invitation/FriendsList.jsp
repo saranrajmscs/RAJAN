@@ -168,7 +168,7 @@
     <div class="span4">
     	
       <% jo = j3.getJSONObject(i); %>
-      <input type="checkbox" value=<%= jo.get("id") %> name=<%= jo.get("id") %>>  <%= jo.get("name") %>
+      <input type="checkbox" value=<%= jo.get("id") + "-" + jo.get("name") %> name=<%= "FB" + jo.get("id") %>>  <%= jo.get("name") %>
     </div>
     <%
     j = ++i;
@@ -176,7 +176,7 @@
     	jo = j3.getJSONObject(j); %>
     <div class="span4" >
     
-      <input type="checkbox" value=<%= jo.get("id") %> name=<%= jo.get("id") %>>  <%= jo.get("name") %>
+      <input type="checkbox" value=<%= jo.get("id") + "-" + jo.get("name") %> name=<%= "FB" + jo.get("id") %>>  <%= jo.get("name") %>
     </div>
     <% } %>
     <%
@@ -185,7 +185,7 @@
     	jo = j3.getJSONObject(j); %>
     <div class="span4" >
     
-      <input type="checkbox" value=<%= jo.get("id") %> name=<%= jo.get("id") %>>  <%= jo.get("name") %>
+      <input type="checkbox" value=<%= jo.get("id") + "-" + jo.get("name") %> name=<%= "FB" + jo.get("id") %>>  <%= jo.get("name") %>
     </div>
     <% } 
     }
