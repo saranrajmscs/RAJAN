@@ -5,16 +5,12 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="../css/bootstrap.css" rel="stylesheet">
 <title>Try the FB login</title>
 </head>
 <body>
 <form method="post" action="/RecommendGiftHandler">
-<%
-    String fbURL = "http://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=" + URLEncoder.encode("http://soceveplnr.appspot.com/RecommendGiftHandler") + "&scope=email, read_stream, user_likes,friends_likes";
-%>
-
-<a href="<%= fbURL %>"><img src="../img/facebook.png" border="0" /></a>
-
+<button type="submit" class="btn btn-primary">Continue</button>
 </form>
 </body>
 </html>

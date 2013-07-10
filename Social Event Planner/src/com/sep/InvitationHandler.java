@@ -206,9 +206,59 @@ public class InvitationHandler extends HttpServlet {
 		// TODO Auto-generated method stub
 		String hidCtrl = request.getParameter("HiddenControl");
 		hidCtrl = hidCtrl == null? "" : hidCtrl; 
+		HttpSession session = request.getSession(true);
+		String userId = (String) session.getAttribute("USER_ID");
+		userId = userId == null ? "12345" : userId.trim();
 		
 		if(hidCtrl.equals("Step1")) 
 		{
+			String eveName = request.getParameter("EventName");
+			eveName = eveName == null ? "" : eveName.trim();
+
+			String eveType = request.getParameter("EventType");
+			eveType = eveType == null ? "" : eveType.trim();
+			
+			String eveDt = request.getParameter("EventDate");
+			eveDt = eveDt == null ? "" : eveDt.trim();
+			
+			String eveTm = request.getParameter("EventTime");
+			eveTm = eveTm == null ? "" : eveTm.trim();
+			
+			String eveLoc = request.getParameter("EventLocation");
+			eveLoc = eveLoc == null ? "" : eveLoc.trim();
+			
+			String eveHost = request.getParameter("EventHost");
+			eveHost = eveHost == null ? "" : eveHost.trim();
+			
+			String eveHsCon = request.getParameter("HostContactDetails");
+			eveHsCon = eveHsCon == null ? "" : eveHsCon.trim();
+			
+			String eveDesc = request.getParameter("EventDesc");
+			eveDesc = eveDesc == null ? "" : eveDesc.trim();
+			try {
+				SEP_DB_Manager dbMgr = new SEP_DB_Manager();
+				Connection c = SEP_DB_Manager.getConnection();
+				System.out.println("CONNECTION : " + c);
+				String statement = "INSERT INTO EVENT_MASTER (EVENT_NAME, EVENT_DESC, EVENT_DATE, EVENT_TIME, EVENT_LOCATION, EVENT_TYPE, EVENT_HOST, EVENT_HOST_CONTACT, USER_ID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			    PreparedStatement stmt = c.prepareStatement(statement);
+			    stmt.setString(1, eveName);
+			    stmt.setString(2, eveDesc);
+			    stmt.setString(3, eveDt);
+			    stmt.setString(4, eveTm);
+			    stmt.setString(5, eveLoc);
+			    stmt.setString(6, eveType);
+			    stmt.setString(7, eveHost);
+			    stmt.setString(8, eveHsCon);
+			    stmt.setString(9, userId);
+			    
+			    int retVal = stmt.executeUpdate();
+			    System.out.println("DB Update " + retVal);
+			}
+			catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+			
 			// Redirects to confirmation page to initiate Facebook connection
 			response.sendRedirect("./invitation/SocialConfirmation.jsp");
 		} else if(hidCtrl.equals("Step2")){

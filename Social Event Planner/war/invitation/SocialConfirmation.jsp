@@ -122,6 +122,7 @@
 		
 <form class="form-horizontal" action="/InvitationHandler" method="post">
  <input type="hidden" name="HiddenControl" value="Step2">
+ <input type="hidden" name="SocialType" value="Facebook">
  <div class="control-group">
   	
     <div class="controls" align=left>
@@ -136,9 +137,28 @@
       <button type="submit" class="btn btn-primary">Continue</button>
     </div>
   </div>
+  </div>
 </form>				
 
-
+<form class="form-horizontal" action="/InvitationHandler" method="post">
+ <input type="hidden" name="HiddenControl" value="Step2">
+ <input type="hidden" name="SocialType" value="GPlus">
+ <div class="control-group">
+  	
+    <div class="controls" align=left>
+      Please be advised that you can invite your Google+ friends for your personal Event. Please click the below button to get your Google+ friends. 
+    </div>
+  </div>
+  <div class="control-group">
+  	
+   
+  <div class="control-group">
+    <div class="controls" align=center>
+      <button type="submit" class="btn btn-primary">Continue</button>
+    </div>
+  </div>
+  </div>
+</form>	
       
 
       <hr>

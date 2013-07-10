@@ -40,7 +40,7 @@ public class RecommendGiftHandler extends HttpServlet{
 
 	        String token = null;
 	        try {
-	        	String g = "https://graph.facebook.com/oauth/access_token?client_id=322861041181267&redirect_uri=" + URLEncoder.encode("http://localhost:8080/FacebookTestOauth/testfb.htm", "UTF-8") + "&client_secret=e6fb605e445367d5711b16f8c1c93274&code=" + code;
+	        	String g = "https://graph.facebook.com/oauth/access_token?client_id=322861041181267&redirect_uri=" + URLEncoder.encode("http://soceveplnr.appspot.com/RecommendGiftHandler", "UTF-8") + "&client_secret=e6fb605e445367d5711b16f8c1c93274&code=" + code;
 	            URL u = new URL(g);
 	            URLConnection c = u.openConnection();
 	            BufferedReader in = new BufferedReader(new InputStreamReader(c.getInputStream()));
