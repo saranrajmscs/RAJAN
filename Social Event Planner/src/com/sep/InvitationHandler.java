@@ -17,6 +17,7 @@ import java.sql.Statement;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -59,9 +60,12 @@ public class InvitationHandler extends HttpServlet {
 	protected void storeInvitees(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
 		HttpSession session = request.getSession(true);
-		String event_id = (String) session.getAttribute("EVENT_ID");
+		Integer event_id = (Integer) session.getAttribute("EVENT_ID");
+		event_id = event_id == null ? new Integer(0) : event_id;
 		PrintWriter    servletOutput = response.getWriter(); 
+		servletOutput.print("Event_id from Session " + event_id.intValue());
 		
+		Vector<Properties> invVec = new Vector<Properties>();
 		Enumeration qryStrEnum = request.getParameterNames();
 		while(qryStrEnum.hasMoreElements()) {
 			String qryStr = (String) qryStrEnum.nextElement();
@@ -69,9 +73,52 @@ public class InvitationHandler extends HttpServlet {
 				String qryVal = request.getParameter(qryStr);
 				System.out.println(qryVal);
 				servletOutput.print(qryVal);
+				StringTokenizer sToken = new StringTokenizer(qryVal, "-");
+				String fbId = sToken.nextToken();
+				String inviteeName = sToken.nextToken();
+				Connection c = null;
+				PreparedStatement stmt =  null;
+				try {
+					SEP_DB_Manager dbMgr = new SEP_DB_Manager();
+					c = SEP_DB_Manager.getConnection();
+					System.out.println("CONNECTION : " + c);
+					String statement = "INSERT INTO INVITEE_LIST (INVITEE_NAME, INVITEE_EMAIL_ID, INVITEE_SOURCE_TYPE, EVENT_ID) VALUES(?, ?, ?, ?)";
+				    stmt = c.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
+				    stmt.setString(1, inviteeName);
+				    stmt.setString(2, fbId);
+				    stmt.setString(3, "Facebook");
+				    stmt.setInt(4, event_id.intValue());
+				    
+				    int retVal = stmt.executeUpdate();
+				    System.out.println("DB Update " + retVal);
+				    
+				    ResultSet rs = stmt.getGeneratedKeys();
+				    Properties prop = new Properties();
+				    while(rs.next()) {
+				    	int invitee_id = rs.getInt(1);
+				    	System.out.println("Inserted Invitee Id is " + invitee_id);
+				    	prop.setProperty("INVITEE_ID", ""+invitee_id);
+				    	prop.setProperty("INVITEE_NAME", inviteeName);
+				    	prop.setProperty("INVITEE_FBID", fbId);
+				    	prop.setProperty("INVITEE_SRC", "Facebook");
+				    	invVec.addElement(prop);
+				    }
+				
+					stmt.close();
+					c.close();
+				}
+				catch(Exception e) {
+					e.printStackTrace();
+				}
+				finally {
+
+				}
 			}
 		}
-	
+		session.setAttribute("INVITEE_LIST", invVec);
+		
+		String redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/InvitationConfirmation.jsp" );
+		response.sendRedirect(redirect);		
 	}
 	
 	protected void processResponse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -293,6 +340,14 @@ public class InvitationHandler extends HttpServlet {
 			    	int event_id = rs.getInt(1);
 			    	System.out.println("Inserted Event Id is " + event_id);
 			    	session.setAttribute("EVENT_ID", event_id);
+			    	session.setAttribute("EVENT_NAME", eveName);
+			    	session.setAttribute("EVENT_DESC", eveDesc);
+			    	session.setAttribute("EVENT_DT", eveDt);
+			    	session.setAttribute("EVENT_TIME", eveTm);
+			    	session.setAttribute("EVENT_LOC", eveLoc);
+			    	session.setAttribute("EVENT_TYPE", eveType);
+			    	session.setAttribute("EVENT_HOST", eveHost);
+			    	session.setAttribute("EVENT_HSCON", eveHsCon);
 			    }
 			    
 			    
