@@ -118,7 +118,7 @@
           </div>
         </div><!-- /.navbar -->
       </div>
-	
+	<!-- Change to push -->
 		
 <form id="auth" action="https://www.linkedin.com/uas/oauth2/authorization" method="POST" target="_blank">
 <p><input type="hidden" name="response_type" value="code"></p>
