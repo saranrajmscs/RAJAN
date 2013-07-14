@@ -4,18 +4,26 @@
     <servlet-name>Social_Event_Planner</servlet-name>
     <servlet-class>com.sep.Social_Event_PlannerServlet</servlet-class>
   </servlet>
+   <servlet>
+    <servlet-name>GoogleHandler</servlet-name>
+    <servlet-class>com.sep.GoogleHandler</servlet-class>
+  </servlet>
   <servlet>
     <servlet-name>InvitationHandler</servlet-name>
     <servlet-class>com.sep.InvitationHandler</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>RecommendGiftHandler</servlet-name>
+    <servlet-class>com.sep.RecommendGiftHandler</servlet-class>
   </servlet>
   <servlet-mapping>
     <servlet-name>InvitationHandler</servlet-name>
     <url-pattern>/InvitationHandler</url-pattern>
   </servlet-mapping>
-  <servlet>
-    <servlet-name>RecommendGiftHandler</servlet-name>
-    <servlet-class>com.sep.RecommendGiftHandler</servlet-class>
-  </servlet>
+  <servlet-mapping>
+    <servlet-name>GoogleHandler</servlet-name>
+    <url-pattern>/GoogleHandler</url-pattern>
+  </servlet-mapping>
   <servlet-mapping>
     <servlet-name>RecommendGiftHandler</servlet-name>
     <url-pattern>/RecommendGiftHandler</url-pattern>

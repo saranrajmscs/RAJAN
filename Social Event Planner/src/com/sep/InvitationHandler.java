@@ -355,11 +355,13 @@ public class InvitationHandler extends HttpServlet {
 			    if(retVal != 0){
 			    	if(eveType.equals("Personal")) {
 						// Redirects to confirmation page to initiate Facebook connection
-						response.sendRedirect("./invitation/SocialConfirmation.jsp");			    		
+			    		String redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/SocialConfirmation.jsp" );
+						response.sendRedirect(redirect);			    		
 			    	}
 			    	else {
 						// Redirects to confirmation page to initiate Facebook connection
-						response.sendRedirect("./linkedInConn/ProfessionalSocialConfirmation.jsp");			    					    		
+			    		String redirect = response.encodeRedirectURL(request.getContextPath() + "./linkedInConn/ProfessionalSocialConfirmation.jsp" );
+						response.sendRedirect(redirect);			    					    		
 			    	}
 			    }
 			    else {
@@ -386,27 +388,10 @@ public class InvitationHandler extends HttpServlet {
 
 			if(socType.equals("GPlus")) {
 				// Redirects to G+ Login / Authorization page
+				String googleURL = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me&state=SOCEVEPLNRGPLUS&redirect_uri=http%3A%2F%2Flocalhost%3A8888%2FGoogleHandler&response_type=code&client_id=57827475490.apps.googleusercontent.com&approval_prompt=force";
+				response.sendRedirect(googleURL);
 								
 			}
-			/*response.setContentType("text/html");
-			response.getWriter().println("<h1><font face=\"Verdana\"> Social Event Planner </font></h1><br/>");
-			// Test Message for DVCS
-			response.getWriter().println("<font face=\"Verdana\"> This is the first servlet. Our logic will be built on this</font><br/> ");
-			try {
-				SEP_DB_Manager sepDB = new SEP_DB_Manager();
-			Connection c = SEP_DB_Manager.getConnection();
-			System.out.println("CONNECTION : " + c);
-			String statement ="select * from USER_MASTER";
-		    PreparedStatement stmt = c.prepareStatement(statement);
-		      ResultSet rs = stmt.executeQuery();
-		      response.getWriter().println(rs.findColumn("ROW_ID"));
-		      response.getWriter().println(request.getParameter("inputEmail"));
-		      response.getWriter().println(request.getParameter("EventType"));
-		      
-			}
-			catch(Exception e) {
-				e.printStackTrace();
-			}*/					
 		} else if(hidCtrl.equals("FriendSelect")) {
 			// Store Selected Invitees into DB.
 			storeInvitees(request, response);

@@ -122,8 +122,8 @@
 		
 <form id="auth" action="https://www.linkedin.com/uas/oauth2/authorization" method="POST" target="_blank">
 <p><input type="hidden" name="response_type" value="code"></p>
-<p><input type="hidden" name="scope" value="r_basicprofile r_emailaddress"></p>
-<p><input type="hidden" name="redirect_uri" value="http://soceveplnr.appspot.com/linkedInConn/ConnectLinkedin.jsp"></p>
+<p><input type="hidden" name="scope" value="r_basicprofile r_emailaddress r_fullprofile r_network"></p>
+<p><input type="hidden" name="redirect_uri" value="http://localhost:8888/linkedInConn/ConnectLinkedin.jsp"></p>
 <p><input type="hidden" name="client_id" value="w76aej9ln16a"></p>
 <p><input type="hidden" name="state" value="SECRET12345"></p>
 

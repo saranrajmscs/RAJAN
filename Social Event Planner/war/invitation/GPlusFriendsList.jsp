@@ -124,18 +124,11 @@
           </div>
         </div><!-- /.navbar -->
       </div>
-		<% Enumeration<String> lst = session.getAttributeNames();
-    		while(lst.hasMoreElements()) {
-    			String str = (String) lst.nextElement();
-   		%>
-    		<!-- %= str %-->
-   		<%
-    		} 
-		%>
-<form class="form-horizontal" action="/InvitationHandler" method="post">
+		
+<form class="form-horizontal" action="/GoogleHandler" method="post">
  <input type="hidden" name="HiddenControl" value="FriendSelect">
  <div class="row-fluid">
- 	<div class="span12"><strong>Please select your Facebook Friends for the Event from the below list :</strong></div>
+ 	<div class="span12"><strong>Please select your Google+ Friends for the Event from the below list :</strong></div>
  </div>
 
  <%
@@ -154,11 +147,17 @@
 	JSONArray j3 = (JSONArray) j2.get("data");
 	System.out.println("Converted JSON 3 : " + j2.get("data"));
 	System.out.println("Converted JSON 3 : " + j3.length());*/
-	String jsonStr = (String) session.getAttribute("FBFRNDJSON");
-	JSONArray j3 = new JSONArray(jsonStr);
+	String jsonStr = (String) session.getAttribute("GPLUSFRNDS");
+	JSONObject circleJson = new JSONObject(jsonStr);
 	JSONObject jo = null;
-	int j = 0;
-	for(int i = 0; i < j3.length() ; i++ ) {
+	if(circleJson.has("items")) {
+		JSONArray j3 = circleJson.getJSONArray("items");
+		int j = 0;
+		for(int i=0; i < j3.length() ; i++)
+		{
+			//servletOutput.println("Friend " + i + " - " + frndArray.get(i).toString());
+			//JSONObject jObj = frndArray.getJSONObject(i);
+	
 		//JSONObject jo = j3.getJSONObject(i);
 		//System.out.println(i + " - ID " + jo.get("id") + " - " + jo.get("name"));
  %>
@@ -168,7 +167,7 @@
     <div class="span4">
     	
       <% jo = j3.getJSONObject(i); %>
-      <input type="checkbox" value="<%= jo.get("id") + "-" + jo.get("name") %>" name=<%= "FB" + jo.get("id") %>>  <%= jo.get("name") %>
+      <input type="checkbox" value="<%= jo.get("id") + "-" + jo.get("displayName") %>" name=<%= "GP" + jo.get("id") %>>  <%= jo.get("displayName") %>
     </div>
     <%
     j = ++i;
@@ -176,7 +175,7 @@
     	jo = j3.getJSONObject(j); %>
     <div class="span4" >
     
-      <input type="checkbox" value="<%= jo.get("id") + "-" + jo.get("name") %>" name=<%= "FB" + jo.get("id") %>>  <%= jo.get("name") %>
+      <input type="checkbox" value="<%= jo.get("id") + "-" + jo.get("displayName") %>" name=<%= "GP" + jo.get("id") %>>  <%= jo.get("displayName") %>
     </div>
     <% } %>
     <%
@@ -185,10 +184,11 @@
     	jo = j3.getJSONObject(j); %>
     <div class="span4" >
     
-      <input type="checkbox" value="<%= jo.get("id") + "-" + jo.get("name") %>" name=<%= "FB" + jo.get("id") %>>  <%= jo.get("name") %>
+      <input type="checkbox" value="<%= jo.get("id") + "-" + jo.get("displayName") %>" name=<%= "GP" + jo.get("id") %>>  <%= jo.get("displayName") %>
     </div>
     <% } 
     }
+	}
     %>
    
   <div class="control-group">
@@ -200,11 +200,11 @@
 </form>				
 <form class="form-horizontal" action="/InvitationHandler" method="post">
  <input type="hidden" name="HiddenControl" value="Step2">
- <input type="hidden" name="SocialType" value="GPlus">
+ <input type="hidden" name="SocialType" value="Facebook">
  <div class="control-group">
   	
     <div class="controls" align=left>
-      If you want to invite Google+ friends for this Event, please click "G+ Friends" button. 
+      If you want to invite Facebook friends for this Event, please click "FB Friends" button. 
     </div>
   </div>
   <div class="control-group">
@@ -212,11 +212,11 @@
    
   <div class="control-group">
     <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">G+ Friends</button>
+      <button type="submit" class="btn btn-primary">FB Friends</button>
     </div>
   </div>
   </div>
-</form>	
+</form>		
 
       
 
