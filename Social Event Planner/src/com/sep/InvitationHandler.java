@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
@@ -70,6 +71,18 @@ public class InvitationHandler extends HttpServlet {
 		redirectCtrl = redirectCtrl == null ? "" : redirectCtrl.trim();
 		System.out.println("redirectCtrl 2 " + redirectCtrl);
 		
+		Integer eveId = (Integer) session.getAttribute("EVENT_ID");
+		String eveName = (String) session.getAttribute("EVENT_NAME");
+		String eveDesc = (String) session.getAttribute("EVENT_DESC");
+		String eveDate = (String) session.getAttribute("EVENT_DT");
+		String eveTime = (String) session.getAttribute("EVENT_TIME");
+		String eveLoc = (String) session.getAttribute("EVENT_LOC");
+		String eveType = (String) session.getAttribute("EVENT_TYPE");
+		String eveHost = (String) session.getAttribute("EVENT_HOST");
+		String eveHsCon = (String) session.getAttribute("EVENT_HSCON");	
+		String fbTok = (String) session.getAttribute("FBTOKEN");
+		System.out.println(fbTok);
+				
 		Vector<Properties> invVec = (Vector<Properties>) session.getAttribute("INVITEE_LIST"); 
 		invVec = invVec == null ? new Vector<Properties>() : invVec;
 		Enumeration qryStrEnum = request.getParameterNames();
@@ -108,6 +121,38 @@ public class InvitationHandler extends HttpServlet {
 				    	prop.setProperty("INVITEE_FBID", fbId);
 				    	prop.setProperty("INVITEE_SRC", "Facebook");
 				    	invVec.addElement(prop);
+				    	
+				    	String fbURL = "https://graph.facebook.com/" + fbId + "/events?access_token=" + fbTok;
+				    	String postParams = "name=\"" + eveName + "\"&start_time=" + eveDate + "&privacy_type=OPEN&location=\""+eveLoc+"\"&description=\""+eveDesc+"\"";
+				    	System.out.println("fbURL " + fbURL);
+				    	System.out.println("postParams " + postParams);
+				    	
+				    	URL url = new URL(fbURL);
+						HttpURLConnection httpConn = (HttpURLConnection) url.openConnection();
+						
+						httpConn.setRequestMethod("POST");
+						httpConn.setDoInput(true);
+						httpConn.setDoOutput(true);
+						httpConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+						//httpConn.setRequestProperty("User-Agent", "Sociel Event Planner");
+						httpConn.connect();
+						
+						
+						PrintStream ps = new PrintStream(httpConn.getOutputStream());
+						ps.print(postParams);
+						
+						// reads the FB response and will be used for the API calls
+						BufferedReader buffRdr = new BufferedReader(new InputStreamReader(httpConn.getInputStream()));
+				
+						String line = "";
+						
+						while (null != (line = buffRdr.readLine())){
+							System.out.println("Line " + line);
+							//jsonStr = jsonStr + line;
+						   // resp.add(line);
+						}
+						buffRdr.close();
+				    	
 				    }
 				
 					stmt.close();
@@ -149,8 +194,8 @@ public class InvitationHandler extends HttpServlet {
 		authCd = authCd == null ? "" : authCd;
 		
 		// Exchange Auth token for Access Token
-		//String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
-		String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
+		String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
+		//String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
 		Vector<String> respVec = submitHTTPRequest(fbUrl);
 		Enumeration<String> respEnum = respVec.elements();
 		while(respEnum.hasMoreElements()){
@@ -167,6 +212,7 @@ public class InvitationHandler extends HttpServlet {
 				StringTokenizer accToken = new StringTokenizer(aToken, "=");
 				String acTok1 = accToken.nextToken();
 				String acTok2 = accToken.nextToken();
+				session.setAttribute("FBTOKEN", acTok2);
 				
 				//servletOutput.println("Access Token : " + acTok2);
 				//servletOutput.println("Expires : " + expStr);
@@ -394,8 +440,8 @@ public class InvitationHandler extends HttpServlet {
 			socType = socType == null ? "": socType.trim();
 			if(socType.equals("Facebook")) {
 				// Redirects to FB Login / Authorization page
-				//String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me";
-				String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me";
+				String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me, create_event";
+				//String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me, create_event";
 				response.sendRedirect(fbUrl);				
 			}
 
