@@ -43,7 +43,7 @@ public class GoogleHandler extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		// Process FB response, if it is HTTP GET
-		processResponse(request, response);
+		initialProcess(request, response);
 	}
 	
 	protected void processResponse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -68,7 +68,8 @@ public class GoogleHandler extends HttpServlet {
 		// Exchange Auth token for Access Token
 		//String gpUrl = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&state=%2Fprofile&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&response_type=code&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&approval_prompt=force"+authCd;
 		String gpUrl = "https://accounts.google.com/o/oauth2/token";
-		String postVal = "code="+ authCd +"&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&redirect_uri=http%3A%2F%2Flocalhost:8888%2FGoogleHandler&grant_type=authorization_code";
+		String postVal = "code="+ authCd +"&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&redirect_uri=http%3A%2F%2Fsoceveplnr.appspot.com%2FGoogleHandler&grant_type=authorization_code";
+		//String postVal = "code="+ authCd +"&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&redirect_uri=http%3A%2F%2Flocalhost:8888%2FGoogleHandler&grant_type=authorization_code";
 		//servletOutput.println("URL " + gpUrl);
 		//servletOutput.println("<br/>");	
 		
@@ -79,22 +80,29 @@ public class GoogleHandler extends HttpServlet {
 		JSONObject jobj = new JSONObject(respVec);
 		//servletOutput.println("JSON " + jobj);
 		//servletOutput.println("<br/>");	
-		String accessToken = (String) jobj.get("access_token");
-		String idToken = (String) jobj.get("id_token");
-		Integer expiry = (Integer) jobj.get("expires_in");
-		String tokenType = (String) jobj.get("token_type");
-		//servletOutput.println("accessToken " + accessToken);
-		//servletOutput.println("idToken " + idToken);
-		//servletOutput.println("expiry " + expiry);
-		//servletOutput.println("tokenType " + tokenType);
+		if(jobj.has("access_token")) {
+			String accessToken = (String) jobj.get("access_token");
+			String idToken = (String) jobj.get("id_token");
+			Integer expiry = (Integer) jobj.get("expires_in");
+			String tokenType = (String) jobj.get("token_type");
+			//servletOutput.println("accessToken " + accessToken);
+			//servletOutput.println("idToken " + idToken);
+			//servletOutput.println("expiry " + expiry);
+			//servletOutput.println("tokenType " + tokenType);
+			
+			String gpUrl1 = "https://www.googleapis.com/plus/v1/people/me/people/visible?access_token=" + accessToken;
+			String accTok = tokenType + " " + accessToken;
+			String retJson = submitHTTPRequestGet(gpUrl1, accTok);
+			//servletOutput.println("Return JSON " + retJson);
+			session.setAttribute("GPLUSFRNDS", retJson);
+			String redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/GPlusFriendsList.jsp" );
+			response.sendRedirect(redirect);			
+		}
+		else {
+			String redirect = response.encodeRedirectURL(request.getContextPath() + "./ErrorPage.jsp" );
+			response.sendRedirect(redirect);
+		}
 		
-		String gpUrl1 = "https://www.googleapis.com/plus/v1/people/me/people/visible?access_token=" + accessToken;
-		String accTok = tokenType + " " + accessToken;
-		String retJson = submitHTTPRequestGet(gpUrl1, accTok);
-		//servletOutput.println("Return JSON " + retJson);
-		session.setAttribute("GPLUSFRNDS", retJson);
-		String redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/GPlusFriendsList.jsp" );
-		response.sendRedirect(redirect);
 		
 		
 		/*Enumeration<String> respEnum = respVec.elements();
@@ -232,11 +240,17 @@ public class GoogleHandler extends HttpServlet {
 		PrintWriter    servletOutput = response.getWriter(); 
 		servletOutput.print("Event_id from Session " + event_id.intValue());
 		
-		Vector<Properties> invVec = new Vector<Properties>();
+		String redirectCtrl = request.getParameter("navigationControl");
+		System.out.println("redirectCtrl 1 " + redirectCtrl);
+		redirectCtrl = redirectCtrl == null ? "" : redirectCtrl.trim();
+		System.out.println("redirectCtrl 2 " + redirectCtrl);
+		
+		Vector<Properties> invVec = (Vector<Properties>) session.getAttribute("INVITEE_LIST"); 
+		invVec = invVec == null ? new Vector<Properties>() : invVec;
 		Enumeration qryStrEnum = request.getParameterNames();
 		while(qryStrEnum.hasMoreElements()) {
 			String qryStr = (String) qryStrEnum.nextElement();
-			if(qryStr.startsWith("FB")) {
+			if(qryStr.startsWith("GP")) {
 				String qryVal = request.getParameter(qryStr);
 				System.out.println(qryVal);
 				servletOutput.print(qryVal);
@@ -253,7 +267,7 @@ public class GoogleHandler extends HttpServlet {
 				    stmt = c.prepareStatement(statement, Statement.RETURN_GENERATED_KEYS);
 				    stmt.setString(1, inviteeName);
 				    stmt.setString(2, fbId);
-				    stmt.setString(3, "Facebook");
+				    stmt.setString(3, "Google+");
 				    stmt.setInt(4, event_id.intValue());
 				    
 				    int retVal = stmt.executeUpdate();
@@ -267,7 +281,7 @@ public class GoogleHandler extends HttpServlet {
 				    	prop.setProperty("INVITEE_ID", ""+invitee_id);
 				    	prop.setProperty("INVITEE_NAME", inviteeName);
 				    	prop.setProperty("INVITEE_FBID", fbId);
-				    	prop.setProperty("INVITEE_SRC", "Facebook");
+				    	prop.setProperty("INVITEE_SRC", "Google+");
 				    	invVec.addElement(prop);
 				    }
 				
@@ -280,18 +294,22 @@ public class GoogleHandler extends HttpServlet {
 				finally {
 
 				}
+			} else {
+				System.out.println(qryStr + " - " + request.getParameter(qryStr));
 			}
 		}
 		session.setAttribute("INVITEE_LIST", invVec);
-		
-		String redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/InvitationConfirmation.jsp" );
+		String redirect = "";
+		if(redirectCtrl.equals("RedirectToFBFriends")) {
+			redirect = response.encodeRedirectURL(request.getContextPath() + "/InvitationHandler?HiddenControl=Step2&SocialType=Facebook&DisableButton=True" );
+		} else {
+			redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/InvitationConfirmation.jsp" );
+		}
+
 		response.sendRedirect(redirect);		
 	}
 	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		// Process FB response, if it is HTTP GET
-		//String googleURL = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&state=%2Fprofile&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&response_type=code&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&approval_prompt=force";
+	protected void initialProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String hidCtrl = request.getParameter("HiddenControl");
 		hidCtrl = hidCtrl == null? "" : hidCtrl; 
 		if(hidCtrl.equals("FriendSelect")) {
@@ -300,7 +318,14 @@ public class GoogleHandler extends HttpServlet {
 		}
 		else {
 			processResponse(request, response);
-		}
+		}	
+	}
+	
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		// Process FB response, if it is HTTP GET
+		//String googleURL = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&state=%2Fprofile&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&response_type=code&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&approval_prompt=force";
+		initialProcess(request, response);
 		
 	}
 

@@ -1,5 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+<%@ page import="javax.servlet.http.HttpSession" %>    
+<%@ page import="org.json.JSONArray" %>
+<%@ page import="org.json.JSONObject" %>
+<%@ page import="java.util.*" %>
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
   <head>
@@ -110,7 +116,7 @@
                 <li ><a href="../index.html">Home</a></li>
                 <li><a href="#">Sign In</a></li>
                 <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
-                <!--li><a href="#">Photo Album</a></li-->
+                <!--  li><a href="#">Photo Album</a></li-->
                 <li><a href="#">Recommend Gift</a></li>
                 <li><a href="#">Contact</a></li>
               </ul>
@@ -118,33 +124,39 @@
           </div>
         </div><!-- /.navbar -->
       </div>
-	
 		
-<form id="auth" action="https://www.linkedin.com/uas/oauth2/authorization" method="POST" target="_blank">
-<p><input type="hidden" name="response_type" value="code"></p>
-<p><input type="hidden" name="scope" value="r_basicprofile r_emailaddress r_fullprofile r_network"></p>
-<p><input type="hidden" name="redirect_uri" value="http://soceveplnr.appspot.com/linkedInConn/ConnectLinkedin.jsp"></p>
-<p><input type="hidden" name="client_id" value="w76aej9ln16a"></p>
-<p><input type="hidden" name="state" value="SECRET12345"></p>
 
- <input type="hidden" name="HiddenControl" value="Step2">
- <input type="hidden" name="SocialType" value="LinkedIn">
- <div class="control-group">
-  	
-    <div class="controls" align=left>
-      Please be advised that you can invite your Professional Connections for your Professional Event. Please click the below button to get your LinkedIn connections. 
-    </div>
-  </div>
-  <div class="control-group">
-  	
-   
+ <div class="row-fluid">
+ 	<div class="span12"><strong class="text-error">User denied Access to his / her Social Site !!!</strong></div>
+ </div>
+
+ <%
+
+	session.setAttribute("EVENT_ID", "");
+	session.setAttribute("EVENT_NAME", "");
+	session.setAttribute("EVENT_DESC", "");
+	session.setAttribute("EVENT_DT", "");
+	session.setAttribute("EVENT_TIME", "");
+	session.setAttribute("EVENT_LOC", "");
+	session.setAttribute("EVENT_TYPE", "");
+	session.setAttribute("EVENT_HOST", "");
+	session.setAttribute("EVENT_HSCON", "");	
+	session.setAttribute("INVITEE_LIST", new Vector());
+ %>
+ 
+
+
+ 
   <div class="control-group">
     <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">Professional Connections</button>
+      <a href="./invitation/CreateInvitationMain.jsp" >Need to plan more events?</a>
     </div>
   </div>
   </div>
-</form>				
+			
+
+
+      
 
       <hr>
 

@@ -54,7 +54,7 @@ public class InvitationHandler extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		// Process FB response, if it is HTTP GET
-		processResponse(request, response);
+		initialProcess(request, response);
 	}
 	
 	protected void storeInvitees(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -65,7 +65,13 @@ public class InvitationHandler extends HttpServlet {
 		PrintWriter    servletOutput = response.getWriter(); 
 		servletOutput.print("Event_id from Session " + event_id.intValue());
 		
-		Vector<Properties> invVec = new Vector<Properties>();
+		String redirectCtrl = request.getParameter("navigationControl");
+		System.out.println("redirectCtrl 1 " + redirectCtrl);
+		redirectCtrl = redirectCtrl == null ? "" : redirectCtrl.trim();
+		System.out.println("redirectCtrl 2 " + redirectCtrl);
+		
+		Vector<Properties> invVec = (Vector<Properties>) session.getAttribute("INVITEE_LIST"); 
+		invVec = invVec == null ? new Vector<Properties>() : invVec;
 		Enumeration qryStrEnum = request.getParameterNames();
 		while(qryStrEnum.hasMoreElements()) {
 			String qryStr = (String) qryStrEnum.nextElement();
@@ -117,7 +123,12 @@ public class InvitationHandler extends HttpServlet {
 		}
 		session.setAttribute("INVITEE_LIST", invVec);
 		
-		String redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/InvitationConfirmation.jsp" );
+		String redirect = "";
+		if(redirectCtrl.equals("RedirectToGPlusFriends")) {
+			redirect = response.encodeRedirectURL(request.getContextPath() + "/InvitationHandler?HiddenControl=Step2&SocialType=GPlus&DisableButton=True" );
+		} else {
+			redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/InvitationConfirmation.jsp" );
+		}
 		response.sendRedirect(redirect);		
 	}
 	
@@ -138,6 +149,7 @@ public class InvitationHandler extends HttpServlet {
 		authCd = authCd == null ? "" : authCd;
 		
 		// Exchange Auth token for Access Token
+		//String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
 		String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
 		Vector<String> respVec = submitHTTPRequest(fbUrl);
 		Enumeration<String> respEnum = respVec.elements();
@@ -205,6 +217,7 @@ public class InvitationHandler extends HttpServlet {
 					String respLine = "";
 					while (null != (line = buffRdr.readLine())){
 						respLine = respLine + line;
+						System.out.println(line);
 					}
 					//servletOutput.println("Response " +respLine);
 					
@@ -237,6 +250,9 @@ public class InvitationHandler extends HttpServlet {
 				finally {
 					
 				}
+			} else {
+				String redirect = response.encodeRedirectURL(request.getContextPath() + "./ErrorPage.jsp" );
+				response.sendRedirect(redirect);
 			}
 		}
 		
@@ -277,12 +293,8 @@ public class InvitationHandler extends HttpServlet {
 		return resp;
 		
 	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
+	
+	protected void initialProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String hidCtrl = request.getParameter("HiddenControl");
 		hidCtrl = hidCtrl == null? "" : hidCtrl; 
 		HttpSession session = request.getSession(true);
@@ -382,23 +394,34 @@ public class InvitationHandler extends HttpServlet {
 			socType = socType == null ? "": socType.trim();
 			if(socType.equals("Facebook")) {
 				// Redirects to FB Login / Authorization page
+				//String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me";
 				String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me";
 				response.sendRedirect(fbUrl);				
 			}
 
 			if(socType.equals("GPlus")) {
 				// Redirects to G+ Login / Authorization page
-				String googleURL = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me&state=SOCEVEPLNRGPLUS&redirect_uri=http%3A%2F%2Flocalhost%3A8888%2FGoogleHandler&response_type=code&client_id=57827475490.apps.googleusercontent.com&approval_prompt=force";
+				//String googleURL = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me&state=SOCEVEPLNRGPLUS&redirect_uri=http%3A%2F%2Flocalhost%3A8888%2FGoogleHandler&response_type=code&client_id=57827475490.apps.googleusercontent.com&approval_prompt=force";
+				String googleURL = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.login+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fplus.me&state=SOCEVEPLNRGPLUS&redirect_uri=http%3A%2F%2Fsoceveplnr.appspot.com%2FGoogleHandler&response_type=code&client_id=57827475490.apps.googleusercontent.com&approval_prompt=force";
 				response.sendRedirect(googleURL);
 								
 			}
 		} else if(hidCtrl.equals("FriendSelect")) {
+			System.out.println("Inside Friend Select");
 			// Store Selected Invitees into DB.
 			storeInvitees(request, response);
 		}
 		else {
 			// Process FB responses
 			processResponse(request, response);
-		}
+		}		
+	}
+
+	/**
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		// TODO Auto-generated method stub
+		initialProcess(request, response);
 	}
 }

@@ -100,9 +100,34 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../ico/apple-touch-icon-114-precomposed.png">
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="../ico/apple-touch-icon-57-precomposed.png">
+    <script >
+    
+    function continueNoRedirect() {
+    	//alert("continueNoRedirect()");
+    	var formObj = document.getElementById("pageForm");
+    	formObj.submit();
+    }
+    
+    function continueRedirect() {
+    	//alert("continueRedirect");
+    	var hidObj = document.getElementById("navigationControl");
+    	//alert("hidObj.Value 1 " +hidObj.value);
+    	
+    	hidObj.value = "RedirectToFBFriends";
+    	//alert("hidObj.Value " +hidObj.value);
+    	
+    	
+    	var formObj = document.getElementById("pageForm");
+    	//alert("Form.Value " +document.getElementById("navigationControl").value);
+    	formObj.submit();
+    }
+    </script>
                                    
   </head>
-
+<%
+String disableBut = request.getParameter("DisableButton");
+disableBut = disableBut == null ? "" : disableBut.trim();
+%>
   <body>
 
     <div class="container">
@@ -125,8 +150,9 @@
         </div><!-- /.navbar -->
       </div>
 		
-<form class="form-horizontal" action="/GoogleHandler" method="post">
+<form class="form-horizontal" action="/GoogleHandler" method="post" id="pageForm">
  <input type="hidden" name="HiddenControl" value="FriendSelect">
+ <input type="hidden" id="navigationControl" value="Jesus" name="navigationControl">
  <div class="row-fluid">
  	<div class="span12"><strong>Please select your Google+ Friends for the Event from the below list :</strong></div>
  </div>
@@ -193,12 +219,24 @@
    
   <div class="control-group">
     <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">Continue</button>
+      <button type="button" class="btn btn-primary" onclick="continueNoRedirect()">Continue</button>
+      <%
+      	if(!disableBut.equals("True"))
+      	{
+      %>
+      <button type="button" class="btn btn-primary" onclick="continueRedirect()">Continue & Add FB Friends</button>
+      <%
+      	}
+      %>
+    </div>
+    <br/>
+    <div class="controls" align=center>
+      
     </div>
   </div>
   </div>
 </form>				
-<form class="form-horizontal" action="/InvitationHandler" method="post">
+<!-- form class="form-horizontal" action="/InvitationHandler" method="post">
  <input type="hidden" name="HiddenControl" value="Step2">
  <input type="hidden" name="SocialType" value="Facebook">
  <div class="control-group">
@@ -216,7 +254,7 @@
     </div>
   </div>
   </div>
-</form>		
+</form-->		
 
       
 

@@ -18,7 +18,7 @@
 			String URLString = "https://www.linkedin.com/uas/oauth2/accessToken?grant_type=authorization_code"
 					+ "&code="
 					+ request.getParameter("code")
-					+ "&redirect_uri=http://soceveplnr.appspot.com/ConnectLinkedin.jsp"
+					+ "&redirect_uri=http://soceveplnr.appspot.com/linkedInConn/ConnectLinkedin.jsp"
 					+ "&client_id=w76aej9ln16a"
 					+ "&client_secret=Oc4bC7SQ7vXhjfJI";
 			System.out.println(URLString);
