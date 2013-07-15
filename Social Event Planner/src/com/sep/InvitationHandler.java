@@ -160,6 +160,7 @@ public class InvitationHandler extends HttpServlet {
 				}
 				catch(Exception e) {
 					e.printStackTrace();
+					response.sendRedirect("http://soceveplnr.appspot.com/LoginErrorPage.jsp");
 				}
 				finally {
 
@@ -281,6 +282,7 @@ public class InvitationHandler extends HttpServlet {
 					}
 					catch(Exception e) {
 						e.printStackTrace(servletOutput);
+						response.sendRedirect("http://soceveplnr.appspot.com/LoginErrorPage.jsp");
 					}
 					/*for(int i = 0; i < j3.length() ; i++ ) {
 						JSONObject jo = j3.getJSONObject(i);
@@ -294,6 +296,7 @@ public class InvitationHandler extends HttpServlet {
 				}
 				catch(Exception e) {
 					e.printStackTrace();
+					response.sendRedirect("http://soceveplnr.appspot.com/LoginErrorPage.jsp");
 				}
 				finally {
 					
@@ -433,6 +436,7 @@ public class InvitationHandler extends HttpServlet {
 			}
 			catch(Exception e) {
 				e.printStackTrace();
+				response.sendRedirect("http://soceveplnr.appspot.com/LoginErrorPage.jsp");
 			}
 			finally {
 

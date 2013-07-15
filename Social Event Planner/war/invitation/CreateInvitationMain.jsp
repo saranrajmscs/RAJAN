@@ -167,7 +167,7 @@
   	
     <div class="controls" align=left>
       <label class="control-label" for="inputEmail" >Event Date:</label>&nbsp;&nbsp;&nbsp;	
-      <input type="text" name="EventDate" placeholder="Event Date">
+      <input type="text" name="EventDate" placeholder="Event Date"> Format: YYYY-MM-DD
     </div>
   </div> 
   <div class="control-group">

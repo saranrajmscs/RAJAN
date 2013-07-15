@@ -118,6 +118,7 @@ public class GoogleHandler extends HttpServlet {
 			
 		}catch (Exception e) {
 			e.printStackTrace();	
+			response.sendRedirect("http://soceveplnr.appspot.com/LoginErrorPage.jsp");
 		}
 		
 		
@@ -307,6 +308,7 @@ public class GoogleHandler extends HttpServlet {
 				}
 				catch(Exception e) {
 					e.printStackTrace();
+					response.sendRedirect("http://soceveplnr.appspot.com/LoginErrorPage.jsp");
 				}
 				finally {
 

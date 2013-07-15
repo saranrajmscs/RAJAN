@@ -127,7 +127,7 @@
 		
 
  <div class="row-fluid">
- 	<div class="span12"><strong class="text-error">User needs to login using his / her Google Account to use Social Event Planner Web App !!!</strong></div>
+ 	<div class="span12"><strong class="text-error">Oops technical issues happened !!!</strong></div>
  </div>
 
  <%
@@ -149,7 +149,7 @@
  
   <div class="control-group">
     <div class="controls" align=center>
-       <a class="btn btn-large btn-success" href="/GoogleOpenIdHandler?method=signInMethod">Login using Google Account</a>
+       <a class="btn btn-large btn-success" href="/GoogleOpenIdHandler?method=signInMethod">Please start over !!!</a>
     </div>
   </div>
   </div>
