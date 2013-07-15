@@ -8,5 +8,6 @@
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
 	<classpathentry exported="true" kind="lib" path="C:/Android/JSON-java-master/JSON.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/commons-io-1.3.2.jar"/>
+	<classpathentry kind="lib" path="C:/Android/Remote-Git/git/Social-Event-Planner/Social Event Planner/war/WEB-INF/lib/log4j-1.2.17.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

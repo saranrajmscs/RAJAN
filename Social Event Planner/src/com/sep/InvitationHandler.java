@@ -183,8 +183,10 @@ public class InvitationHandler extends HttpServlet {
 		//servletOutput.print("<html><body><h1>The Facebook Friends are: </h1><p />");
 		
 		HttpSession session = request.getSession(true);
-		String userId = (String) session.getAttribute("USER_ID");
-		userId = userId == null ? "12345" : userId.trim();		
+		Integer userId = (Integer) session.getAttribute("USER_ID");
+		userId = userId == null ? new Integer(0) : userId;	
+		System.out.println("userId "+userId);
+		
 		
 		// Retrieve the State and auth code FB response 
 		String stStr = request.getParameter("state");
@@ -194,8 +196,8 @@ public class InvitationHandler extends HttpServlet {
 		authCd = authCd == null ? "" : authCd;
 		
 		// Exchange Auth token for Access Token
-		String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
-		//String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
+		//String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
+		String fbUrl = "https://graph.facebook.com/oauth/access_token?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&client_secret=1887e3c3807cdcb5a2c81de6ef4feaed&code="+authCd;
 		Vector<String> respVec = submitHTTPRequest(fbUrl);
 		Enumeration<String> respEnum = respVec.elements();
 		while(respEnum.hasMoreElements()){
@@ -241,7 +243,7 @@ public class InvitationHandler extends HttpServlet {
 					SEP_DB_Manager dbMgr = new SEP_DB_Manager();
 					Connection c = SEP_DB_Manager.getConnection();
 					System.out.println("CONNECTION : " + c);
-					String statement = "UPDATE USER_MASTER SET FB_TOKEN = ? WHERE ROW_ID = '" + userId + "'";
+					String statement = "UPDATE USER_MASTER SET FB_TOKEN = ? WHERE ROW_ID = " + userId.intValue() + "";
 				    PreparedStatement stmt = c.prepareStatement(statement);
 				    stmt.setString(1, acTok2);
 				    int retVal = stmt.executeUpdate();
@@ -344,8 +346,9 @@ public class InvitationHandler extends HttpServlet {
 		String hidCtrl = request.getParameter("HiddenControl");
 		hidCtrl = hidCtrl == null? "" : hidCtrl; 
 		HttpSession session = request.getSession(true);
-		String userId = (String) session.getAttribute("USER_ID");
-		userId = userId == null ? "12345" : userId.trim();
+		Integer userId = (Integer) session.getAttribute("USER_ID");
+		userId = userId == null ? new Integer(0) : userId;
+		System.out.println("USer Id " + userId);
 		
 		if(hidCtrl.equals("Step1")) 
 		{
@@ -388,7 +391,7 @@ public class InvitationHandler extends HttpServlet {
 			    stmt.setString(6, eveType);
 			    stmt.setString(7, eveHost);
 			    stmt.setString(8, eveHsCon);
-			    stmt.setString(9, userId);
+			    stmt.setString(9, userId.toString());
 			    
 			    int retVal = stmt.executeUpdate();
 			    System.out.println("DB Update " + retVal);
@@ -440,8 +443,8 @@ public class InvitationHandler extends HttpServlet {
 			socType = socType == null ? "": socType.trim();
 			if(socType.equals("Facebook")) {
 				// Redirects to FB Login / Authorization page
-				String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me, create_event";
-				//String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me, create_event";
+				//String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://localhost:8888/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me, create_event";
+				String fbUrl = "https://www.facebook.com/dialog/oauth?client_id=496480123766256&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&state=FBResponse&scope=email, read_friendlists, friends_about_me, user_about_me, create_event";
 				response.sendRedirect(fbUrl);				
 			}
 

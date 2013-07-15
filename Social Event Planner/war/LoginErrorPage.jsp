@@ -127,7 +127,7 @@
 		
 
  <div class="row-fluid">
- 	<div class="span12"><strong class="text-error">User denied Access to his / her Social Site !!!</strong></div>
+ 	<div class="span12"><strong class="text-error">User needs to login using his / her Google Account to use Social Event Planner Web App !!!</strong></div>
  </div>
 
  <%
@@ -149,7 +149,7 @@
  
   <div class="control-group">
     <div class="controls" align=center>
-      <a href="./invitation/CreateInvitationMain.jsp" >Need to plan more events?</a>
+       <a class="btn btn-large btn-success" href="/GoogleOpenIdHandler?method=signInMethod">Login using Google Account</a>
     </div>
   </div>
   </div>

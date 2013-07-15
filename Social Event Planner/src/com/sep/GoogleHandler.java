@@ -48,59 +48,76 @@ public class GoogleHandler extends HttpServlet {
 	
 	protected void processResponse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
 	{
-		 
-		
-		
-		HttpSession session = request.getSession(true);
-		PrintWriter    servletOutput = response.getWriter();
-		
-		// Retrieve the State and auth code FB response 
-		String stStr = request.getParameter("state");
-		stStr = stStr == null ? "" : stStr;
-		//servletOutput.println("State Jesus " + stStr);
-		//servletOutput.println("<br/>");
-		
-		String authCd = request.getParameter("code");
-		authCd = authCd == null ? "" : authCd;
-		//servletOutput.println("Auth Token " + authCd);
-		//servletOutput.println("<br/>");
-		
-		// Exchange Auth token for Access Token
-		//String gpUrl = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&state=%2Fprofile&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&response_type=code&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&approval_prompt=force"+authCd;
-		String gpUrl = "https://accounts.google.com/o/oauth2/token";
-		String postVal = "code="+ authCd +"&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&redirect_uri=http%3A%2F%2Fsoceveplnr.appspot.com%2FGoogleHandler&grant_type=authorization_code";
-		//String postVal = "code="+ authCd +"&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&redirect_uri=http%3A%2F%2Flocalhost:8888%2FGoogleHandler&grant_type=authorization_code";
-		//servletOutput.println("URL " + gpUrl);
-		//servletOutput.println("<br/>");	
-		
-		String respVec = submitHTTPRequest(gpUrl, postVal);
-		//servletOutput.println("Vector " + respVec);
-		//servletOutput.println("<br/>");		
-		
-		JSONObject jobj = new JSONObject(respVec);
-		//servletOutput.println("JSON " + jobj);
-		//servletOutput.println("<br/>");	
-		if(jobj.has("access_token")) {
-			String accessToken = (String) jobj.get("access_token");
-			String idToken = (String) jobj.get("id_token");
-			Integer expiry = (Integer) jobj.get("expires_in");
-			String tokenType = (String) jobj.get("token_type");
-			//servletOutput.println("accessToken " + accessToken);
-			//servletOutput.println("idToken " + idToken);
-			//servletOutput.println("expiry " + expiry);
-			//servletOutput.println("tokenType " + tokenType);
+		try{
+			HttpSession session = request.getSession(true);
+			PrintWriter    servletOutput = response.getWriter();
 			
-			String gpUrl1 = "https://www.googleapis.com/plus/v1/people/me/people/visible?access_token=" + accessToken;
-			String accTok = tokenType + " " + accessToken;
-			String retJson = submitHTTPRequestGet(gpUrl1, accTok);
-			//servletOutput.println("Return JSON " + retJson);
-			session.setAttribute("GPLUSFRNDS", retJson);
-			String redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/GPlusFriendsList.jsp" );
-			response.sendRedirect(redirect);			
-		}
-		else {
-			String redirect = response.encodeRedirectURL(request.getContextPath() + "./ErrorPage.jsp" );
-			response.sendRedirect(redirect);
+			Integer userId = (Integer) session.getAttribute("USER_ID");
+			userId = userId == null ? new Integer(0) : userId;	
+			System.out.println("userId "+userId);
+			
+			// Retrieve the State and auth code FB response 
+			String stStr = request.getParameter("state");
+			stStr = stStr == null ? "" : stStr;
+			//servletOutput.println("State Jesus " + stStr);
+			//servletOutput.println("<br/>");
+			
+			String authCd = request.getParameter("code");
+			authCd = authCd == null ? "" : authCd;
+			//servletOutput.println("Auth Token " + authCd);
+			//servletOutput.println("<br/>");
+			
+			// Exchange Auth token for Access Token
+			//String gpUrl = "https://accounts.google.com/o/oauth2/auth?scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile&state=%2Fprofile&redirect_uri=http://soceveplnr.appspot.com/InvitationHandler&response_type=code&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&approval_prompt=force"+authCd;
+			String gpUrl = "https://accounts.google.com/o/oauth2/token";
+			String postVal = "code="+ authCd +"&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&redirect_uri=http%3A%2F%2Fsoceveplnr.appspot.com%2FGoogleHandler&grant_type=authorization_code";
+			//String postVal = "code="+ authCd +"&client_id=57827475490.apps.googleusercontent.com&client_secret=zT6PmfvpNm5EqhgBMGxkq26d&redirect_uri=http%3A%2F%2Flocalhost:8888%2FGoogleHandler&grant_type=authorization_code";
+			//servletOutput.println("URL " + gpUrl);
+			//servletOutput.println("<br/>");	
+			
+			String respVec = submitHTTPRequest(gpUrl, postVal);
+			//servletOutput.println("Vector " + respVec);
+			//servletOutput.println("<br/>");		
+			
+			JSONObject jobj = new JSONObject(respVec);
+			//servletOutput.println("JSON " + jobj);
+			//servletOutput.println("<br/>");	
+			if(jobj.has("access_token")) {
+				String accessToken = (String) jobj.get("access_token");
+				String idToken = (String) jobj.get("id_token");
+				Integer expiry = (Integer) jobj.get("expires_in");
+				String tokenType = (String) jobj.get("token_type");
+				//servletOutput.println("accessToken " + accessToken);
+				//servletOutput.println("idToken " + idToken);
+				//servletOutput.println("expiry " + expiry);
+				//servletOutput.println("tokenType " + tokenType);
+				
+				SEP_DB_Manager dbMgr = new SEP_DB_Manager();
+				Connection c = SEP_DB_Manager.getConnection();
+				System.out.println("CONNECTION : " + c);
+				String statement = "UPDATE USER_MASTER SET GGL_TOKEN = ? WHERE ROW_ID = " + userId.intValue();
+			    PreparedStatement stmt = c.prepareStatement(statement);
+			    stmt.setString(1, accessToken);
+			    int retVal = stmt.executeUpdate();
+			    System.out.println("Access Token Updated "+ retVal);
+			    stmt.close();
+			    c.close();
+				
+				String gpUrl1 = "https://www.googleapis.com/plus/v1/people/me/people/visible?access_token=" + accessToken;
+				String accTok = tokenType + " " + accessToken;
+				String retJson = submitHTTPRequestGet(gpUrl1, accTok);
+				//servletOutput.println("Return JSON " + retJson);
+				session.setAttribute("GPLUSFRNDS", retJson);
+				String redirect = response.encodeRedirectURL(request.getContextPath() + "./invitation/GPlusFriendsList.jsp" );
+				response.sendRedirect(redirect);			
+			}
+			else {
+				String redirect = response.encodeRedirectURL(request.getContextPath() + "./ErrorPage.jsp" );
+				response.sendRedirect(redirect);
+			}
+			
+		}catch (Exception e) {
+			e.printStackTrace();	
 		}
 		
 		

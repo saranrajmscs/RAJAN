@@ -127,11 +127,16 @@
 <%
 String disableBut = request.getParameter("DisableButton");
 disableBut = disableBut == null ? "" : disableBut.trim();
+String userFirstName = (String) session.getAttribute("userFirstName");
 %>
   <body>
 
     <div class="container">
-
+	<%
+    	if(userFirstName != null) {
+    %>
+		<li>Hello: <%=userFirstName %></li>
+	<% } %>
       <div class="masthead">
         <h2 class="muted">Social Event Planner</h2>
         <div class="navbar">
@@ -139,7 +144,7 @@ disableBut = disableBut == null ? "" : disableBut.trim();
             <div class="container">
               <ul class="nav">
                 <li ><a href="../index.html">Home</a></li>
-                <li><a href="#">Sign In</a></li>
+                <li><a href="/GoogleOpenIdHandler?method=signInMethod">Sign In</a></li>
                 <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
                 <!--  li><a href="#">Photo Album</a></li-->
                 <li><a href="#">Recommend Gift</a></li>

@@ -100,43 +100,13 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../ico/apple-touch-icon-114-precomposed.png">
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="../ico/apple-touch-icon-57-precomposed.png">
-                                   <script >
-    
-    function continueNoRedirect() {
-    	//alert("continueNoRedirect()");
-    	var formObj = document.getElementById("pageForm");
-    	formObj.submit();
-    }
-    
-    function continueRedirect() {
-    	//alert("continueRedirect");
-    	var hidObj = document.getElementById("navigationControl");
-    	//alert("hidObj.Value 1 " +hidObj.value);
-    	
-    	hidObj.value = "RedirectToGPlusFriends";
-    	//alert("hidObj.Value " +hidObj.value);
-    	
-    	
-    	var formObj = document.getElementById("pageForm");
-    	//alert("Form.Value " +document.getElementById("navigationControl").value);
-    	//alert("Form "+formObj);
-    	formObj.submit();
-    }
-    </script>
+                                   
   </head>
-<%
-String disableBut = request.getParameter("DisableButton");
-disableBut = disableBut == null ? "" : disableBut.trim();
-String userFirstName = (String) session.getAttribute("userFirstName");
-%>
+
   <body>
 
     <div class="container">
-	<%
-    	if(userFirstName != null) {
-    %>
-		<li>Hello: <%=userFirstName %></li>
-	<% } %>
+
       <div class="masthead">
         <h2 class="muted">Social Event Planner</h2>
         <div class="navbar">
@@ -144,7 +114,7 @@ String userFirstName = (String) session.getAttribute("userFirstName");
             <div class="container">
               <ul class="nav">
                 <li ><a href="../index.html">Home</a></li>
-                <li><a href="/GoogleOpenIdHandler?method=signInMethod">Sign In</a></li>
+                <li><a href="#">Sign In</a></li>
                 <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
                 <!--  li><a href="#">Photo Album</a></li-->
                 <li><a href="#">Recommend Gift</a></li>
@@ -154,10 +124,16 @@ String userFirstName = (String) session.getAttribute("userFirstName");
           </div>
         </div><!-- /.navbar -->
       </div>
-
-<form class="form-horizontal" action="/InvitationHandler" method="post" id="pageForm">
+		<% Enumeration<String> lst = session.getAttributeNames();
+    		while(lst.hasMoreElements()) {
+    			String str = (String) lst.nextElement();
+   		%>
+    		<!-- %= str %-->
+   		<%
+    		} 
+		%>
+<form class="form-horizontal" action="/InvitationHandler" method="post">
  <input type="hidden" name="HiddenControl" value="FriendSelect">
- <input type="hidden" id="navigationControl" value="Jesus" name="navigationControl">
  <div class="row-fluid">
  	<div class="span12"><strong>Please select your Facebook Friends for the Event from the below list :</strong></div>
  </div>
@@ -178,7 +154,7 @@ String userFirstName = (String) session.getAttribute("userFirstName");
 	JSONArray j3 = (JSONArray) j2.get("data");
 	System.out.println("Converted JSON 3 : " + j2.get("data"));
 	System.out.println("Converted JSON 3 : " + j3.length());*/
-	String jsonStr = (String) session.getAttribute("FBFRNDJSON");
+	String jsonStr = (String) session.getAttribute("likes");
 	JSONArray j3 = new JSONArray(jsonStr);
 	JSONObject jo = null;
 	int j = 0;
@@ -192,7 +168,7 @@ String userFirstName = (String) session.getAttribute("userFirstName");
     <div class="span4">
     	
       <% jo = j3.getJSONObject(i); %>
-      <input type="checkbox" value="<%= jo.get("id") + "-" + jo.get("name") %>" name=<%= "FB" + jo.get("id") %>>  <%= jo.get("name") %>
+      <input type="checkbox" value="<%= jo.get("id") + "-" + jo.get("name") %>" name=<%= "FB" + jo.get("id") %>>  <%= jo.get("id") %>
     </div>
     <%
     j = ++i;
@@ -217,38 +193,12 @@ String userFirstName = (String) session.getAttribute("userFirstName");
    
   <div class="control-group">
     <div class="controls" align=center>
-      <button type="button" class="btn btn-primary" onclick="continueNoRedirect()">Continue</button>
-      <%
-      	if(!disableBut.equals("True"))
-      	{
-      %>
-      <button type="button" class="btn btn-primary" onclick="continueRedirect()">Continue & Add G+ Friends</button>
-       <%
-      	}
-      %>
+      <button type="submit" class="btn btn-primary">Continue</button>
     </div>
   </div>
   </div>
 </form>				
-<!-- form class="form-horizontal" action="/InvitationHandler" method="post">
- <input type="hidden" name="HiddenControl" value="Step2">
- <input type="hidden" name="SocialType" value="GPlus">
- <div class="control-group">
-  	
-    <div class="controls" align=left>
-      If you want to invite Google+ friends for this Event, please click "G+ Friends" button. 
-    </div>
-  </div>
-  <div class="control-group">
-  	
-   
-  <div class="control-group">
-    <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">G+ Friends</button>
-    </div>
-  </div>
-  </div>
-</form-->	
+
 
       
 

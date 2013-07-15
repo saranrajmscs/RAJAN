@@ -4,6 +4,7 @@
 <%@ page import="org.json.JSONArray" %>
 <%@ page import="org.json.JSONObject" %>
 <%@ page import="java.util.*" %>
+<%@ page import="com.socio.recomgift.model.*" %>
 
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
@@ -16,6 +17,7 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
+    <link href="../css/TableCSSCode.css" rel="stylesheet">
     <link href="../css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
       body {
@@ -104,7 +106,7 @@
   </head>
 
   <body>
-
+<form method="post" action="/RecommendGiftHandler">
     <div class="container">
 
       <div class="masthead">
@@ -114,64 +116,49 @@
             <div class="container">
               <ul class="nav">
                 <li ><a href="../index.html">Home</a></li>
-                <li><a href="/GoogleOpenIdHandler?method=signInMethod">Sign In</a></li>
-                <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
+                <li><a href="#">Sign In</a></li>
+                <li><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
                 <!--  li><a href="#">Photo Album</a></li-->
-                <li><a href="#">Recommend Gift</a></li>
+                <li class="active"><a href="#">Recommend Gift</a></li>
                 <li><a href="#">Contact</a></li>
               </ul>
             </div>
           </div>
         </div><!-- /.navbar -->
       </div>
-		
-
- <div class="row-fluid">
- 	<div class="span12"><strong class="text-error">User denied Access to his / her Social Site !!!</strong></div>
- </div>
-
- <%
-
-	session.setAttribute("EVENT_ID", "");
-	session.setAttribute("EVENT_NAME", "");
-	session.setAttribute("EVENT_DESC", "");
-	session.setAttribute("EVENT_DT", "");
-	session.setAttribute("EVENT_TIME", "");
-	session.setAttribute("EVENT_LOC", "");
-	session.setAttribute("EVENT_TYPE", "");
-	session.setAttribute("EVENT_HOST", "");
-	session.setAttribute("EVENT_HSCON", "");	
-	session.setAttribute("INVITEE_LIST", new Vector());
- %>
- 
-
-
- 
-  <div class="control-group">
-    <div class="controls" align=center>
-      <a href="./invitation/CreateInvitationMain.jsp" >Need to plan more events?</a>
-    </div>
-  </div>
-  </div>
-			
-
-
+       <%
+    ArrayList<EventInviteeDO> eventAndInviteeList = (ArrayList<EventInviteeDO>) request.getSession().getAttribute("eventAndInviteeList");
+	EventInviteeDO eventInviteeDO = null;
+	String eventId = "";
+	int j = 0;%>
+	<table class="CSSTableGenerator">
+      		<tr>
+      			<td>Event Name</td>
+      			<td>Invitee Name</td>
+      		</tr>
+	<%
+	for(int i = 0; i < eventAndInviteeList.size() ; i++ ) {
+ %> 	
+      <% eventInviteeDO = new EventInviteeDO();
+      	 eventInviteeDO = eventAndInviteeList.get(i);	
+      %>
+      		
+      		<tr>
+      			<td><%= eventInviteeDO.getEventName() %></td>
+      			<td><a href='/RecommendGiftHandler?method=getFriendId&friendId=+<%= eventInviteeDO.getInviteeId() %>' ><%= eventInviteeDO.getInviteeName() %></a></td>
+      		</tr>
+      		
       
+     <!--  <input type="text" value="<%= eventInviteeDO.getEventName() %>" name=<%= eventInviteeDO.getEventName() %>>  <%= eventInviteeDO.getEventName() %>
+      <input type="text" value="<%= eventInviteeDO.getInviteeName() %>" name=<%= eventInviteeDO.getInviteeName() %>>  <%= eventInviteeDO.getInviteeName() %> -->      
 
-      <hr>
-
+   <%} %>
+  </table>
+     <hr>
       <div class="footer">
         <p>&copy; Summer 2013 - Social Computing Science</p>
       </div>
-
-    </div> <!-- /container -->
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    
-    
-    
-
-  </body>
+    </div> 
+    </form>
+    </body>
 </html>
