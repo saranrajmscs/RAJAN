@@ -100,16 +100,39 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../ico/apple-touch-icon-114-precomposed.png">
       <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../ico/apple-touch-icon-72-precomposed.png">
                     <link rel="apple-touch-icon-precomposed" href="../ico/apple-touch-icon-57-precomposed.png">
-                                   
+                                   <script >
+    
+    function continueNoRedirect() {
+    	//alert("continueNoRedirect()");
+    	var formObj = document.getElementById("pageForm");
+    	formObj.submit();
+    }
+    
+    function continueRedirect() {
+    	//alert("continueRedirect");
+    	var hidObj = document.getElementById("navigationControl");
+    	//alert("hidObj.Value 1 " +hidObj.value);
+    	
+    	hidObj.value = "RedirectToGPlusFriends";
+    	//alert("hidObj.Value " +hidObj.value);
+    	
+    	
+    	var formObj = document.getElementById("pageForm");
+    	//alert("Form.Value " +document.getElementById("navigationControl").value);
+    	//alert("Form "+formObj);
+    	formObj.submit();
+    }
+    </script>
   </head>
 <%
-
+String disableBut = request.getParameter("DisableButton");
+disableBut = disableBut == null ? "" : disableBut.trim();
 String userFirstName = (String) session.getAttribute("userFirstName");
 %>
   <body>
 
     <div class="container">
-<%
+	<%
     	if(userFirstName != null) {
     %>
 		<li>Hello: <%=userFirstName %> (if not, <a href="/LogoutServlet">Logout</a>)</li>
@@ -131,104 +154,82 @@ String userFirstName = (String) session.getAttribute("userFirstName");
           </div>
         </div><!-- /.navbar -->
       </div>
-		
-<form class="form-horizontal" action="/InvitationHandler" method="post">
+
+<form class="form-horizontal" action="/LinkedInHandler" method="post" id="pageForm">
  <input type="hidden" name="HiddenControl" value="FriendSelect">
+ <input type="hidden" id="navigationControl" value="Jesus" name="navigationControl">
  <div class="row-fluid">
- 	<div class="span12"><strong>Congratulations !!! You have succesfully created an Event.</strong></div>
+ 	<div class="span12"><strong>Please select your LinkedIn Connections for the Professional Event from the below list :</strong></div>
  </div>
 
  <%
-
-	Integer eveId = (Integer) session.getAttribute("EVENT_ID");
-	String eveName = (String) session.getAttribute("EVENT_NAME");
-	String eveDesc = (String) session.getAttribute("EVENT_DESC");
-	String eveDate = (String) session.getAttribute("EVENT_DT");
-	String eveTime = (String) session.getAttribute("EVENT_TIME");
-	String eveLoc = (String) session.getAttribute("EVENT_LOC");
-	String eveType = (String) session.getAttribute("EVENT_TYPE");
-	String eveHost = (String) session.getAttribute("EVENT_HOST");
-	String eveHsCon = (String) session.getAttribute("EVENT_HSCON");	
-	Vector invVec = (Vector) session.getAttribute("INVITEE_LIST");
+ 
+ 	
+	Vector<Properties> vec = (Vector) session.getAttribute("LINKEDIN");
+	
+	int j = 0;
+	Properties jo = null;
+	for(int i = 0; i < vec.size() ; i++ ) {
+		//JSONObject jo = j3.getJSONObject(i);
+		//System.out.println(i + " - ID " + jo.get("id") + " - " + jo.get("name"));
+		//Properties prop = vec.get(i);
  %>
  
- <table class="table table-bordered">
- 	<tr>
- 		<td ><strong>Event Name</strong></td>
- 		<td><%= eveName %></td>
- 	</tr>
- 	<tr>
- 		<td ><strong>Event Type</strong></td>
- 		<td><%= eveType %></td>
- 	</tr>
- 	<tr>
- 		<td ><strong>Event Date</strong></td>
- 		<td><%= eveDate %></td>
- 	</tr>
- 	<tr>
- 		<td ><strong>Event Time</strong></td>
- 		<td><%= eveTime %></td>
- 	</tr>
- 	<tr>
- 		<td ><strong>Event Location</strong></td>
- 		<td><%= eveLoc %></td>
- 	</tr>
- 	<tr>
- 		<td ><strong>Event Host</strong></td>
- 		<td><%= eveHost %></td>
- 	</tr>
- 	<tr>
- 		<td ><strong>Event Host Contact</strong></td>
- 		<td><%= eveHsCon %></td>
- 	</tr>
-	<tr>
- 		<td ><strong>Event Description</strong></td>
- 		<td><%= eveDesc %></td>
- 	</tr> 	
- 	<tr>
- 		<td colspan=2>
- 			<table class="table table-bordered">
-				<tr bgcolor="#C0C0C0">
- 					<td colspan=3 align=center><strong>Quests</strong></td>
- 				</tr> 			
- 				<tr bgcolor="#C0C0C0">
- 					<td><strong>Invitee Name</strong></td>
- 					<td><strong>Invitee Id</strong></td>
- 					<td><strong>Invitee From</strong></td>
- 				</tr>
-<%
-	Enumeration enumProp = invVec.elements();
-	while(enumProp.hasMoreElements())
-	{
-		Properties prop = (Properties) enumProp.nextElement();
-		String invName = prop.getProperty("INVITEE_NAME");
-		String invId = prop.getProperty("INVITEE_FBID");
-		String invSrc = prop.getProperty("INVITEE_SRC");
-		
-%>
-<tr>
- 					<td><%= invName %></td>
- 					<td><%= invId %></td>
- 					<td><%= invSrc %> </td>
- 				</tr>
-<%
-	}
-%> 				
- 			</table>
- 		</td>
- 	</tr>
- </table>
  
-
- 
+<div class="row-fluid">
+    <div class="span4">
+    	
+      <% jo = vec.get(i); %>
+      <input type="checkbox" value="<%= jo.getProperty("ID") + "$" + jo.getProperty("FIRST_NAME") + " " + jo.getProperty("LAST_NAME") %>" name=<%= "LI" + jo.get("ID") %>>  <%= jo.getProperty("FIRST_NAME") + " " + jo.getProperty("LAST_NAME") %>
+    </div>
+    <%
+    j = ++i;
+    if(j < vec.size()) {
+    	jo = vec.get(j); %>
+    <div class="span4" >
+    
+      <input type="checkbox" value="<%= jo.getProperty("ID") + "$" + jo.getProperty("FIRST_NAME") + " " + jo.getProperty("LAST_NAME") %>" name=<%= "LI" + jo.get("ID") %>>  <%= jo.getProperty("FIRST_NAME") + " " + jo.getProperty("LAST_NAME") %>
+    </div>
+    <% } %>
+    <%
+    j = ++i;
+    if(j < vec.size()) {
+    	jo = vec.get(j); %>
+    <div class="span4" >
+    
+      <input type="checkbox" value="<%= jo.getProperty("ID") + "$" + jo.getProperty("FIRST_NAME") + " " + jo.getProperty("LAST_NAME") %>" name=<%= "LI" + jo.get("ID") %>>  <%= jo.getProperty("FIRST_NAME") + " " + jo.getProperty("LAST_NAME") %>
+    </div>
+    <% } 
+    }
+    %>
+   
   <div class="control-group">
     <div class="controls" align=center>
-      <a href="./CreateInvitationMain.jsp" >Need to plan more events?</a>
+      <button type="submit" class="btn btn-primary" >Continue</button>
+      
     </div>
   </div>
   </div>
-			
-
+</form>				
+<!-- form class="form-horizontal" action="/InvitationHandler" method="post">
+ <input type="hidden" name="HiddenControl" value="Step2">
+ <input type="hidden" name="SocialType" value="GPlus">
+ <div class="control-group">
+  	
+    <div class="controls" align=left>
+      If you want to invite Google+ friends for this Event, please click "G+ Friends" button. 
+    </div>
+  </div>
+  <div class="control-group">
+  	
+   
+  <div class="control-group">
+    <div class="controls" align=center>
+      <button type="submit" class="btn btn-primary">G+ Friends</button>
+    </div>
+  </div>
+  </div>
+</form-->	
 
       
 

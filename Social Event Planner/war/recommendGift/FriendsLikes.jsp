@@ -118,7 +118,7 @@
                 <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
                 <!--  li><a href="#">Photo Album</a></li-->
                 <li><a href="#">Recommend Gift</a></li>
-                <li><a href="#">Contact</a></li>
+                <!-- li><a href="#">Contact</a></li-->
               </ul>
             </div>
           </div>

@@ -104,19 +104,19 @@ HttpSession sess = request.getSession();
   <body>
 
     <div class="container">
-    <li>Hello: <%=userFirstName %></li>
+    <li>Hello: <%=userFirstName %> (if not, <a href="/LogoutServlet">Logout</a>)</li>
       <div class="masthead">
         <h2 class="muted">Social Event Planner</h2>
         <div class="navbar">
           <div class="navbar-inner">
             <div class="container">
               <ul class="nav">
-                <li class="disabled"><a href="#">Home</a></li>
-                <li style="disabled:false"><a href="#">Sign In</a></li>
+                <li ><a href="#">Home</a></li>
+                <li class="disabled"><a href="/GoogleOpenIdHandler?method=signInMethod">Sign In</a></li>
                 <li><a href="./invitation/CreateInvitationMain.jsp">Create Invitation</a></li>
                 <!-- li><a href="#">Photo Album</a></li-->
                 <li><a href="./recommendGift/loginFb.jsp">Recommend Gift</a></li>
-                <li><a href="#">Contact</a></li>
+                <!-- li><a href="#">Contact</a></li-->
               </ul>
             </div>
           </div>
@@ -127,7 +127,7 @@ HttpSession sess = request.getSession();
       <div class="jumbotron">
         <h2>Got to plan an Event with your Social Friends?</h2>
         <p class="lead">Enables user to login using their Google account (using OpenID)  to Create Invitation for an Event, send invitation (using OAuth) also provide recommendation for return gift (using OAuth) for the Invitees !!! </p>
-        <a class="btn btn-large btn-success" href="#">Get started today</a>
+        <a class="btn btn-large btn-success" href="/GoogleOpenIdHandler?method=signInMethod">Get started today</a>
       </div>
 
       <hr>

@@ -106,7 +106,7 @@ String userFirstName = (String) session.getAttribute("userFirstName");
 <%
     	if(userFirstName != null) {
     %>
-		<li>Hello: <%=userFirstName %></li>
+		<li>Hello: <%=userFirstName %> (if not, <a href="/LogoutServlet">Logout</a>)</li>
 	<% } %>
       <div class="masthead">
         <h2 class="muted">Social Event Planner</h2>
@@ -119,7 +119,7 @@ String userFirstName = (String) session.getAttribute("userFirstName");
                 <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
                 <!--li><a href="#">Photo Album</a></li-->
                 <li><a href="#">Recommend Gift</a></li>
-                <li><a href="#">Contact</a></li>
+                <!-- li><a href="#">Contact</a></li-->
               </ul>
             </div>
           </div>

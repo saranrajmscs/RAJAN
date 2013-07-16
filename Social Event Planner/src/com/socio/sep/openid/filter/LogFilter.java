@@ -31,8 +31,8 @@ public class LogFilter implements Filter{
 		if (session != null && session.getAttribute("USER_ID") != null) {
 			
 			} else {
-				//response.sendRedirect("http://soceveplnr.appspot.com/LoginErrorPage.jsp");
 				response.sendRedirect("http://soceveplnr.appspot.com/GoogleOpenIdHandler?method=signInMethod");
+				//response.sendRedirect("http://localhost:8888/GoogleOpenIdHandler?method=signInMethod");
 			}
 		}
 		 chain.doFilter(req, res);

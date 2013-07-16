@@ -106,7 +106,7 @@ String userFirstName = (String) session.getAttribute("userFirstName");
 <%
     	if(userFirstName != null) {
     %>
-		<li>Hello: <%=userFirstName %></li>
+		<li>Hello: <%=userFirstName %> (if not, <a href="/LogoutServlet">Logout</a>)</li>
 	<% } %>
       <div class="masthead">
         <h2 class="muted">Social Event Planner</h2>
@@ -119,7 +119,7 @@ String userFirstName = (String) session.getAttribute("userFirstName");
                 <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
                 <!--li><a href="#">Photo Album</a></li-->
                 <li><a href="#">Recommend Gift</a></li>
-                <li><a href="#">Contact</a></li>
+                <!-- li><a href="#">Contact</a></li-->
               </ul>
             </div>
           </div>
@@ -127,7 +127,7 @@ String userFirstName = (String) session.getAttribute("userFirstName");
       </div>
 	<!-- Change to push -->
 		
-<form id="auth" action="https://www.linkedin.com/uas/oauth2/authorization" method="POST" target="_blank">
+<form id="auth" action="https://www.linkedin.com/uas/oauth2/authorization" method="POST" >
 <p><input type="hidden" name="response_type" value="code"></p>
 <p><input type="hidden" name="scope" value="r_basicprofile r_emailaddress r_fullprofile r_network"></p>
 <p><input type="hidden" name="redirect_uri" value="http://soceveplnr.appspot.com/linkedInConn/ConnectLinkedin.jsp"></p>
