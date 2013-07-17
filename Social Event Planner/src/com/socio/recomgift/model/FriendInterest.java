@@ -1,8 +1,14 @@
 package com.socio.recomgift.model;
 
+import java.io.Serializable;
 
-public class FriendInterest {
 
+public class FriendInterest implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String interestId;
 	private String interestCategory;
 	private String interestName;

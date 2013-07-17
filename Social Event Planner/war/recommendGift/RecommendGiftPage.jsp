@@ -1,5 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+<%@ page import="javax.servlet.http.HttpSession" %>    
+<%@ page import="org.json.JSONArray" %>
+<%@ page import="org.json.JSONObject" %>
+<%@ page import="java.util.*" %>
+<%@ page import="com.socio.recomgift.model.*" %>
+
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html lang="en">
   <head>
@@ -10,6 +17,7 @@
     <meta name="author" content="">
 
     <!-- Le styles -->
+    <link href="../css/TableCSSCode.css" rel="stylesheet">
     <link href="../css/bootstrap.css" rel="stylesheet">
     <style type="text/css">
       body {
@@ -96,18 +104,11 @@
                     <link rel="apple-touch-icon-precomposed" href="../ico/apple-touch-icon-57-precomposed.png">
                                    
   </head>
-<%
 
-String userFirstName = (String) session.getAttribute("userFirstName");
-%>
   <body>
-
+<form method="post" action="/RecommendGiftHandler">
     <div class="container">
-<%
-    	if(userFirstName != null) {
-    %>
-		<li>Hello: <%=userFirstName %> (if not, <a href="/LogoutServlet">Logout</a>)</li>
-	<% } %>
+
       <div class="masthead">
         <h2 class="muted">Social Event Planner</h2>
         <div class="navbar">
@@ -115,73 +116,61 @@ String userFirstName = (String) session.getAttribute("userFirstName");
             <div class="container">
               <ul class="nav">
                 <li ><a href="../index.html">Home</a></li>
-                <li><a href="/GoogleOpenIdHandler?method=signInMethod">Sign In</a></li>
-                <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
-                <!--li><a href="#">Photo Album</a></li-->
-                <li><a href="/RecommendGiftHandler?method=getEventsAndInvitees">Recommend Gift</a></li>
+                <li><a href="#">Sign In</a></li>
+                <li><a href="/invitation/CreateInvitationMain.jsp">Create Invitation</a></li>
+                <!--  li><a href="#">Photo Album</a></li-->
+                <li class="active"><a href="/RecommendGiftHandler?method=getEventsAndInvitees">Recommend Gift</a></li>
                 <!-- li><a href="#">Contact</a></li-->
               </ul>
             </div>
           </div>
         </div><!-- /.navbar -->
       </div>
+       <%
+    
+    		Friend friendObject = (Friend) request.getSession().getAttribute("friendObject");
+    		if(friendObject!= null) {
+    		List<String> giftDescription = friendObject.getGiftDescription();
+    		
+    		int limitingSize = 0;
+    		if(giftDescription.size()>=10) {
+    		limitingSize = 10;	
+    		} else {
+    			limitingSize = giftDescription.size();
+    		}
 	
+	int j = 0;%>
+	<table class="CSSTableGenerator">
+      		<tr>
+      			<td align = "center" ><%=friendObject.getFriendName() %></td>
+      		</tr>
+	<%
+	if(limitingSize != 0) {
 		
-<form class="form-horizontal" action="/InvitationHandler" method="post">
- <input type="hidden" name="HiddenControl" value="Step2">
- <input type="hidden" name="SocialType" value="Facebook">
- <div class="control-group">
-  	
-    <div class="controls" align=left>
-      Please be advised that you can invite your Facebook friends for your personal Event. Please click the below button to get your Facebook friends. 
+	for(int i = 0; i < limitingSize ; i++ ) {
+ %> 	
+      		
+      		<tr>
+      			<td align = "center"><%= giftDescription.get(i) %></td>
+      		</tr>
+<%} 
+   } else {%>
+   </table>
+   <div class="row-fluid">
+ 	<div class="span12"><strong class="text-error">The Person is open to accept anything!!! </strong></div>
+ </div>
+   <%} 
+   }else {%>
+   <div class="row-fluid">
+ 	<div class="span12"><strong class="text-error">Oops!!! The Person has restricted public access.</strong></div>
+ </div>
+   <%} %>
+  
+     <hr>      
     </div>
-  </div>
-  <div class="control-group">
-  	
-   
-  <div class="control-group">
-    <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">FB Friends</button>
-    </div>
-  </div>
-  </div>
-</form>				
-
-<form class="form-horizontal" action="/InvitationHandler" method="post">
- <input type="hidden" name="HiddenControl" value="Step2">
- <input type="hidden" name="SocialType" value="GPlus">
- <div class="control-group">
-  	
-    <div class="controls" align=left>
-      Please be advised that you can invite your Google+ friends for your personal Event. Please click the below button to get your Google+ friends. 
-    </div>
-  </div>
-  <div class="control-group">
-  	
-   
-  <div class="control-group">
-    <div class="controls" align=center>
-      <button type="submit" class="btn btn-primary">G+ Friends</button>
-    </div>
-  </div>
-  </div>
-</form>	
-      
-
-      <hr>
-
-      <div class="footer">
+    <div class="footer">
         <p>&copy; Summer 2013 - Social Computing Science</p>
-      </div>
-
-    </div> <!-- /container -->
-
-    <!-- Le javascript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    
-    
-    
-
-  </body>
+      </div> 
+    </form>
+    </body>
 </html>

@@ -124,7 +124,7 @@ String userFirstName = (String) session.getAttribute("userFirstName");
                 <li><a href="/GoogleOpenIdHandler?method=signInMethod">Sign In</a></li>
                 <li class="active"><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
                 <!--  li><a href="#">Photo Album</a></li-->
-                <li><a href="#">Recommend Gift</a></li>
+                <li><a href="/RecommendGiftHandler?method=getEventsAndInvitees">Recommend Gift</a></li>
                 <!-- li><a href="#">Contact</a></li-->
               </ul>
             </div>

@@ -23,10 +23,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.tools.ant.types.resources.First;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.google.apphosting.utils.config.AppYaml.StaticFile;
+import java.sql.PreparedStatement;
 import com.socio.recomgift.model.EventInviteeDO;
 import com.socio.recomgift.model.Friend;
 import com.socio.recomgift.model.FriendInterest;
@@ -55,22 +57,44 @@ public class RecommendGiftHandler extends HttpServlet {
 		// Process FB response, if it is HTTP GET
 		if(request.getParameter("method") != null && "getFriendId".equals(request.getParameter("method"))) {
 			getFriendId(request, response);
+		} else if(request.getParameter("method") != null && "getEventsAndInvitees".equals(request.getParameter("method"))) {
+			getEventsAndInvitees(request, response);
 		}
 		processResponse(request, response);
 	}
 	
 	
 	
+	private void getEventsAndInvitees(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		
+		HttpSession session = request.getSession(true);
+		ArrayList<EventInviteeDO> eventAndInviteeList = new ArrayList<EventInviteeDO>();
+		eventAndInviteeList = retrieveEventsAndFriends(request, response);
+		PrintWriter servletOutput = response.getWriter();
+		servletOutput.println("eventAndInviteeList.size(): "+eventAndInviteeList.size());
+		servletOutput.println("<br/>");
+		session.setAttribute("eventAndInviteeList", eventAndInviteeList);
+		String redirect = response.encodeRedirectURL(request.getContextPath() + "./recommendGift/EventsAndInviteesDisplay.jsp" );
+		response.sendRedirect(redirect);
+		processResponse(request, response);
+	
+}
+
 	private void getFriendId(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		
 		PrintWriter servletOutput = response.getWriter();
 		String friendId = request.getParameter("friendId");
+		String friendName = request.getParameter("friendName");
 		HttpSession session = request.getSession(true);
-//		servletOutput.println("friendId: "+ friendId);
-//		servletOutput.println("<br/>");
-		String token = "CAAHDi8lqRfABACLVkue4UIx1vbZB0T0RC1bVrf4knhahc5LrtiFZBPs8fQ92DARqeFeZAiEQiUm285RIBytqtGWYpQx0dHzPxOiMRVhz2FrHMmIfWh5ZB7kmhOSgOsQ59wOZA2pcuulU7OFPZBPZAmA";
-		String likesAPICall = "https://graph.facebook.com/220900111?fields=likes&access_token=" + token;		            	
+		
+		int USER_ID = Integer.parseInt((session.getAttribute("USER_ID")).toString());
+		servletOutput.println("USER_ID: "+ USER_ID);
+		servletOutput.println("<br/>");
+		
+		String fbToken = getUserToken(request, response, USER_ID);
+		String likesAPICall = "https://graph.facebook.com/"+friendId+"?fields=likes&access_token=" + fbToken;		            	
     	URL url2 = new URL(likesAPICall);
 		HttpURLConnection httpConn2 = (HttpURLConnection) url2.openConnection();
 		
@@ -85,15 +109,48 @@ public class RecommendGiftHandler extends HttpServlet {
 		}
 		JSONObject likes = new JSONObject(respLine2);
 		JSONObject likesObject = null;
-		JSONArray likesArray = null; 
+		JSONArray likesArray = null;
+		ArrayList<FriendLike> friendLikesList = null;
+		Friend friend = null;
+		FriendLike friendLike = null;
 		if(likes.has("likes")) {
 		likesObject = (JSONObject) likes.get("likes");
 		if(likesObject != null) {
 			likesArray = (JSONArray) likesObject.get("data");
 			}
+		friendLikesList = new ArrayList<FriendLike>();
+		friend = new Friend();
+		for(int k=0;k<likesArray.length();k++) {
+        	if (likesArray.getJSONObject(k) != null) {
+        	friendLike = new FriendLike();	
+        	friendLike.setLikeCategory(likesArray.getJSONObject(k).getString("category"));
+        	friendLike.setLikeName(likesArray.getJSONObject(k).getString("category"));
+//        	servletOutput.println("<br/>");
+//        	servletOutput.println(likesArray.getJSONObject(k).getString("category"));
+        	friendLike.setLikeName(likesArray.getJSONObject(k).getString("name"));
+//        	servletOutput.println("<br/>");
+//        	servletOutput.println(likesArray.getJSONObject(k).getString("name"));
+//        	servletOutput.println("<br/>");
+        	friendLike.setLikeId(likesArray.getJSONObject(k).getString("id"));
+        	friendLikesList.add(friendLike);
+        	}
+		}
+		friend.setFriendId(friendId);
+		friend.setFriendName(friendName);
+		friend.setFriendLikes(friendLikesList);
+		//storeFriendLikes(friend, response);
+		servletOutput.println("friendList: "+friend.getFriendLikes().size());
+    	servletOutput.println("<br/>");
+		friend = recommendGift(friend, request, response);
+//		servletOutput.println("friendGiftDescriptionSize: "+giftDescriptionList.size());
+//    	servletOutput.println("<br/>");
+		for(int i=0;i<friend.getGiftDescription().size();i++) {
+		servletOutput.println("friendGiftDescription: "+friend.getGiftDescription().get(i));
+    	servletOutput.println("<br/>");
+	}
 		}
 		try {
-			session.setAttribute("likes", likesArray.toString());
+			session.setAttribute("friendObject", friend);
 			
 		}
 		catch(Exception e) {
@@ -101,10 +158,143 @@ public class RecommendGiftHandler extends HttpServlet {
 		}
 		
 		buffRdr2.close();
-		String redirect = response.encodeRedirectURL(request.getContextPath() + "./recommendGift/FriendsLikes.jsp" );
+		/*for(int i=0;i<friend.getGiftDescription().size();i++) {
+			servletOutput.println("friendGiftDescription"+friend.getGiftDescription().get(i));
+	    	servletOutput.println("<br/>");
+		}*/
+		String redirect = response.encodeRedirectURL(request.getContextPath() + "./recommendGift/RecommendGiftPage.jsp" );
 		response.sendRedirect(redirect);
+//		servletOutput.println("friendLikesList"+friendLikesList.size());
+//    	servletOutput.println("<br/>");
+		
+	}
+
+	private Friend recommendGift(Friend friend, HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		PrintWriter servletOutput = response.getWriter();
+		Connection conn = null;
+		List<FriendLike> friendLikeList = friend.getFriendLikes();
+		String queryForGettingDescription = "";
+		PreparedStatement stmt = null;
+		String giftDescription = "";
+		List<String> giftDescriptionList = null;
+		try {
+			SEP_DB_Manager dbMgr = new SEP_DB_Manager();
+			conn = SEP_DB_Manager.getConnection();
+			
+				servletOutput.println("friendLikeList.size()"+friendLikeList.size());
+				servletOutput.println("</br>");
+//				int j=0;
+				giftDescriptionList = new ArrayList<String>();
+				for(int i=0;i<friendLikeList.size();i++) {
+					queryForGettingDescription = "select description from like_category where like_category like '%"+friendLikeList.get(i).getLikeCategory()+"%' and description is not null";
+					//servletOutput.println("queryForGettingDescription: "+queryForGettingDescription);
+					//servletOutput.println("</br>");
+					stmt = conn.prepareStatement(queryForGettingDescription);
+					ResultSet res = stmt.executeQuery(queryForGettingDescription);
+					while(res.next()) {
+						giftDescription = res.getString("description")+" "+friendLikeList.get(i).getLikeName();
+//						servletOutput.println("giftDescription: "+giftDescription);
+//						servletOutput.println("</br>");
+						giftDescriptionList.add(giftDescription);
+						//servletOutput.println("giftDescriptionList: "+giftDescriptionList.get(0));
+						//servletOutput.println("</br>");
+						//j++;
+					}
+					
+			    }
+			friend.setGiftDescription(giftDescriptionList);
+		
+			stmt.close();
+			conn.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+			//response.sendRedirect("http://soceveplnr.appspot.com/LoginErrorPage.jsp");
+		}
+		finally {
+
+		}
+		
+	return friend;	
+	}
+
+	private void storeFriendLikes(Friend friend, HttpServletResponse response) throws ServletException, IOException{
+		PrintWriter servletOutput = response.getWriter();
+		Connection conn = null;
+		List<FriendLike> friendLikeList = friend.getFriendLikes();
+		String queryForInseringLikeCategories = "";
+		String queryForGettingFriends = "";
+		PreparedStatement stmt = null;
+		String friendInDB = "";
+		try {
+			SEP_DB_Manager dbMgr = new SEP_DB_Manager();
+			conn = SEP_DB_Manager.getConnection();
+			queryForGettingFriends = "select friend_id from FriendLikes where friend_id = "+friend.getFriendId();
+			stmt = conn.prepareStatement(queryForGettingFriends);
+			ResultSet rs = stmt.executeQuery(queryForGettingFriends);
+			while(rs.next()) {
+			friendInDB = rs.getString("friend_id");
+			} 
+			if (friendInDB.equals(friend.getFriendId())) {
+				return;
+			}
+			else {
+//				servletOutput.println("friendLikeList.size()"+friendLikeList.size());
+//				servletOutput.println("</br>");
+				for(int i=0;i<friendLikeList.size();i++) {
+					queryForInseringLikeCategories = "insert into FriendLikes(friend_id, like_category, like_name) values(?,?,?)";
+					stmt = conn.prepareStatement(queryForInseringLikeCategories);				
+					stmt.setString(1, friend.getFriendId());
+					String category = friendLikeList.get(i).getLikeCategory();
+					String like_name = friendLikeList.get(i).getLikeName();
+					//servletOutput.println("category: "+category);
+					//servletOutput.println("</br>");
+				    stmt.setString(2, category);
+				    stmt.setString(3, like_name);
+				    stmt.executeUpdate(queryForInseringLikeCategories);
+				    }
+			}
+		
+			stmt.close();
+			conn.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+			//response.sendRedirect("http://soceveplnr.appspot.com/LoginErrorPage.jsp");
+		}
+		finally {
+
+		}
 		
 		
+	}
+
+	private String getUserToken(HttpServletRequest request,
+			HttpServletResponse response, int USER_ID) throws ServletException, IOException {
+		Connection conn = null;
+		Statement stmt =  null;
+		PrintWriter servletOutput = response.getWriter();
+		String fbToken = null;
+		try {
+			SEP_DB_Manager dbMgr = new SEP_DB_Manager();
+			conn = SEP_DB_Manager.getConnection();
+			String queryForEventsAndInvitees = "select FB_TOKEN from USER_MASTER where ROW_ID="+USER_ID;
+			stmt = conn.createStatement();
+		    ResultSet rs = stmt.executeQuery(queryForEventsAndInvitees);
+		    while(rs.next()) {
+		    	fbToken = rs.getString("FB_TOKEN");
+		    } 
+		
+			stmt.close();
+			conn.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		finally {
+
+		}
+		servletOutput.println(fbToken);
+		servletOutput.println("</br>");
+		return fbToken;
 	}
 
 	protected void processResponse(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
@@ -389,6 +579,8 @@ public class RecommendGiftHandler extends HttpServlet {
 
 	private ArrayList<EventInviteeDO> retrieveEventsAndFriends(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Logger logger = Logger.getLogger(RecommendGiftHandler.class);
+		HttpSession session = request.getSession(true);
+		int USER_ID = Integer.parseInt((session.getAttribute("USER_ID")).toString());
 		ArrayList<EventInviteeDO> eventAndInviteeList = null;
 		EventInviteeDO eventInviteeDO = null;
 		Connection conn = null;
@@ -398,7 +590,7 @@ public class RecommendGiftHandler extends HttpServlet {
 		try {
 			SEP_DB_Manager dbMgr = new SEP_DB_Manager();
 			conn = SEP_DB_Manager.getConnection();
-			String queryForEventsAndInvitees = "select i.INVITEE_email_id, i.INVITEE_NAME, i.EVENT_ID, e.EVENT_NAME from INVITEE_LIST i, EVENT_MASTER e, USER_MASTER u where u.ROW_ID = e.USER_ID and e.ROW_ID = i.EVENT_ID";
+			String queryForEventsAndInvitees = "select i.INVITEE_email_id, i.INVITEE_NAME, i.EVENT_ID, e.EVENT_NAME from INVITEE_LIST i, EVENT_MASTER e, USER_MASTER u where u.ROW_ID = e.USER_ID and e.ROW_ID = i.EVENT_ID and e.USER_ID="+USER_ID;
 			logger.info("Query"+queryForEventsAndInvitees);
 		    stmt = conn.createStatement();
 		    ResultSet rs = stmt.executeQuery(queryForEventsAndInvitees);

@@ -1,7 +1,13 @@
 package com.socio.recomgift.model;
 
-public class FriendLike {
+import java.io.Serializable;
 
+public class FriendLike implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String likeCategory;
 	private String likeName;
 	private String likeId;

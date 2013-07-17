@@ -117,17 +117,18 @@
               <ul class="nav">
                 <li ><a href="../index.html">Home</a></li>
                 <li><a href="#">Sign In</a></li>
-                <li><a href="./CreateInvitationMain.jsp">Create Invitation</a></li>
+                <li><a href="./invitation/CreateInvitationMain.jsp">Create Invitation</a></li>
                 <!--  li><a href="#">Photo Album</a></li-->
-                <li class="active"><a href="#">Recommend Gift</a></li>
-                <!--  li><a href="#">Contact</a></li-->
+                <li class="active"><a href="/RecommendGiftHandler?method=getEventsAndInvitees">Recommend Gift</a></li>
+                <!-- li><a href="#">Contact</a></li-->
               </ul>
             </div>
           </div>
         </div><!-- /.navbar -->
       </div>
        <%
-    ArrayList<EventInviteeDO> eventAndInviteeList = (ArrayList<EventInviteeDO>) request.getSession().getAttribute("eventAndInviteeList");
+    ArrayList<EventInviteeDO> eventAndInviteeList = null; 
+    eventAndInviteeList = (ArrayList<EventInviteeDO>) request.getSession().getAttribute("eventAndInviteeList");
 	EventInviteeDO eventInviteeDO = null;
 	String eventId = "";
 	int j = 0;%>
@@ -137,6 +138,7 @@
       			<td>Invitee Name</td>
       		</tr>
 	<%
+	if(eventAndInviteeList.size() != 0) {
 	for(int i = 0; i < eventAndInviteeList.size() ; i++ ) {
  %> 	
       <% eventInviteeDO = new EventInviteeDO();
@@ -145,15 +147,21 @@
       		
       		<tr>
       			<td><%= eventInviteeDO.getEventName() %></td>
-      			<td><a href='/RecommendGiftHandler?method=getFriendId&friendId=+<%= eventInviteeDO.getInviteeId() %>' ><%= eventInviteeDO.getInviteeName() %></a></td>
+      			<td><a href='/RecommendGiftHandler?method=getFriendId&friendId=<%= eventInviteeDO.getInviteeId() %>&friendName=<%= eventInviteeDO.getInviteeName() %>' ><%= eventInviteeDO.getInviteeName() %></a></td>
       		</tr>
       		
       
      <!--  <input type="text" value="<%= eventInviteeDO.getEventName() %>" name=<%= eventInviteeDO.getEventName() %>>  <%= eventInviteeDO.getEventName() %>
       <input type="text" value="<%= eventInviteeDO.getInviteeName() %>" name=<%= eventInviteeDO.getInviteeName() %>>  <%= eventInviteeDO.getInviteeName() %> -->      
 
+   <%} 
+   } else {%>
+   </table>
+   <div class="row-fluid">
+ 	<div class="span12"><strong class="text-error">Please create an Event!!!</strong></div>
+ </div>
    <%} %>
-  </table>
+  
      <hr>
       <div class="footer">
         <p>&copy; Summer 2013 - Social Computing Science</p>
